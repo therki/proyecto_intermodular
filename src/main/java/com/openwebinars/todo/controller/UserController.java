@@ -26,7 +26,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
-@PreAuthorize("hasRole('USER')")
+@PreAuthorize("hasRole('USUARIO')")
 @SecurityRequirement(name="basicAuth")
 @Tag(name = "Usuario", description = "Endpoints del Usuario")
 @RequiredArgsConstructor
@@ -145,14 +145,8 @@ public class UserController {
     /** LIstar categorias */
     /* Listar categorias */
     @Operation(summary = "Listar etiquetas", description = "Listar etiquetas del usuario")
-    @GetMapping("/tags")
+    @GetMapping("/categories")
     public List<Category> listCategories() {
         return categoryService.listCategories();
-    }
-    /* Añadir etiqueta a una tarea */
-    @Operation(summary = "Añadir etiqueta", description = "Añadir etiqueta a una tarea existente")
-    @GetMapping("/task/{id}/tag/{tagId}")
-    public ResponseEntity<Task> updateTaskTag() {
-        return taskService.listCategories();
     }
 }
