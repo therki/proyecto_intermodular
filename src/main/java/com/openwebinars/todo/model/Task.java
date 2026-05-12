@@ -22,8 +22,10 @@ import java.util.Set;
 @Builder
 @ToString
 @Entity
+@Table(name="tasks")
 public class Task {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
@@ -43,7 +45,7 @@ public class Task {
     private Priority priority;
 
     @ManyToOne
-    @JoinColumn(foreignKey =@ForeignKey(name= "fk_task_category"))
+    @JoinColumn(name="category_id",referencedColumnName = "id",foreignKey =@ForeignKey(name= "fk_task_category"))
     private Category category;
 
     @ManyToMany(fetch= FetchType.EAGER)
@@ -58,7 +60,7 @@ public class Task {
     private Set<Tag> tags = new HashSet<>();
 
     @ManyToOne
-    @JoinColumn(foreignKey = @ForeignKey(name="fk_task_user"))
+    @JoinColumn(name = "author_id",foreignKey = @ForeignKey(name="fk_task_user"))
     private User author;
 
     @Override

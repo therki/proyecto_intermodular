@@ -18,13 +18,13 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "user_entity")// USER es palabra reservada en H2 y otros SGBD
+@Table(name = "users")// USER es palabra reservada en H2 y otros SGBD
 public class User implements UserDetails {
     // Tipos de role para el usuario
     public enum RoleType { ADMIN, GESTOR, USUARIO }
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 

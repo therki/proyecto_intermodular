@@ -2,9 +2,7 @@ package com.openwebinars.todo.model;
 
 import com.openwebinars.todo.model.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -17,9 +15,10 @@ import java.util.Objects;
 @Builder
 @ToString
 @Entity
+@Table(name = "tags")
 public class Tag {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
