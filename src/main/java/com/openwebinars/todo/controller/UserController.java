@@ -3,14 +3,10 @@ package com.openwebinars.todo.controller;
 import com.openwebinars.todo.dto.EditTaskDto;
 import com.openwebinars.todo.model.Category;
 import com.openwebinars.todo.model.Task;
-import com.openwebinars.todo.repos.TagRepository;
 import com.openwebinars.todo.service.CategoryService;
 import com.openwebinars.todo.service.TagService;
 import com.openwebinars.todo.service.TaskService;
-import com.openwebinars.todo.users.NewUserCommand;
-import com.openwebinars.todo.users.NewUserResponse;
-import com.openwebinars.todo.users.User;
-import com.openwebinars.todo.users.UserService;
+import com.openwebinars.todo.users.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -38,7 +34,7 @@ public class UserController {
     private final TaskService taskService;
     private final UserService userService;
     private final TagService tagService;
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
     /*** CRUD TAREA ****/
     /* Listar tareas*/
@@ -143,13 +139,34 @@ public class UserController {
             @Parameter(hidden = true) @AuthenticationPrincipal User user) {
         return taskService.searchByTitle(title, user);
     }
+    @Operation(summary = "Buscar tareas por etiqueta",
+            description = "Obtiene todas las tareas del usuario que tienen una etiqueta")
+    @GetMapping("/task/search-by-tag")
+    public List<Task> getTasksByTag(
+            @Parameter(description = "Nombre de la etiqueta", required = true)
+            @RequestParam String tagName,
+            @Parameter(hidden = true)
+            @AuthenticationPrincipal User user) {
+        return taskService.searchByTag(tagName, user);
+    }
+
+    @Operation(summary = "Buscar tareas por etiquetas",
+            description = "Obtiene todas las tareas del usuario que tienen alguna de las etiquetas")
+    @GetMapping("/task/search-by-tags")
+    public List<Task> getTasksByTagList(
+            @Parameter(description = "Nombre de las etiquetas", required = true)
+            @RequestParam List<String> tagNames,
+            @Parameter(hidden = true)
+            @AuthenticationPrincipal User user) {
+        return taskService.searchByTagList(tagNames, user);
+    }
     /*** CRUD TAG */
     /* Listar etiquetas */
     @Operation(summary = "Listar etiquetas", description = "Listar etiquetas del usuario")
     @GetMapping("/tags")
     public List<com.openwebinars.todo.model.Tag> listTags(
             @Parameter(hidden = true) @AuthenticationPrincipal User user) {
-        return tagService.findAll();
+        return tagService.findAllByUser(user);
     }
 
     /* Obtener etiqueta */
@@ -157,8 +174,10 @@ public class UserController {
     @GetMapping("/tag/{name}")
     public com.openwebinars.todo.model.Tag getTag(
             @Parameter(description = "Nombre de la etiqueta", required = true)
-            @PathVariable String name) {
-        return tagService.findByName(name);
+            @PathVariable String name,
+            @Parameter(hidden = true)
+            @AuthenticationPrincipal User user) {
+        return tagService.findByNameAndUser(name, user);
     }
 
     /* Crear etiqueta */
@@ -176,8 +195,10 @@ public class UserController {
                             )
                     )
             )
-            @RequestBody com.openwebinars.todo.model.Tag tag) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(tagService.save(tag));
+            @RequestBody com.openwebinars.todo.model.Tag tag,
+            @Parameter(hidden = true)
+            @AuthenticationPrincipal User user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(tagService.save(tag, user));
     }
     /* Editar etiqueta */
     @Operation(summary = "Editar etiqueta", description = "Editar etiqueta existente")
@@ -186,8 +207,10 @@ public class UserController {
             @Parameter(description = "ID de la etiqueta", required = true)
             @PathVariable Long id,
             @Parameter(description = "Datos actualizados de la etiqueta", required = true)
-            @RequestBody com.openwebinars.todo.model.Tag tag) {
-        return tagService.edit(id, tag);
+            @RequestBody com.openwebinars.todo.model.Tag tag,
+            @Parameter(hidden = true)
+            @AuthenticationPrincipal User user) {
+        return tagService.edit(id, tag, user);
     }
     /* Eliminar etiqueta */
     @Operation(summary = "Eliminar etiqueta", description = "Borra una etiqueta ")
@@ -195,9 +218,12 @@ public class UserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTag(
             @Parameter(description = "ID de la etiqueta", required = true)
-            @PathVariable Long id) {
-        tagService.deleteById(id);
+            @PathVariable Long id,
+            @Parameter(hidden = true)
+            @AuthenticationPrincipal User user) {
+        tagService.deleteById(id, user);
     }
+
     /** LIstar categorias */
     /* Listar categorias */
     @Operation(summary = "Listar etiquetas", description = "Listar etiquetas del usuario")
@@ -205,4 +231,17 @@ public class UserController {
     public List<Category> listCategories() {
         return categoryService.listCategories();
     }
+    /* Editar datos propios del usuario */
+    @Operation(summary = "Editar información de usuario", description = "Actualizar información propia del usuario")
+    @PutMapping("/edit-profile")
+    public NewUserResponse editSelf(
+            @Parameter(hidden = true)
+            @AuthenticationPrincipal User user,
+            @Parameter(description = "Datos actualizados del usuario", required = true)
+            @RequestBody EditUserCommand userInfo) {
+
+        Long userId = user.getId();
+        return userService.updatePartialUser(userId, userInfo);
+    }
+
 }
