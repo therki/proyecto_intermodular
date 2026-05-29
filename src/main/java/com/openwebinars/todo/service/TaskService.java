@@ -1,20 +1,15 @@
 package com.openwebinars.todo.service;
 
-import com.openwebinars.todo.dto.EditTaskDto;
-import com.openwebinars.todo.dto.GetTaskDto;
-import com.openwebinars.todo.error.TaskNotFoundException;
-import com.openwebinars.todo.model.Category;
-import com.openwebinars.todo.model.Tag;
-import com.openwebinars.todo.model.Task;
-import com.openwebinars.todo.repos.CategoryRepository;
-import com.openwebinars.todo.repos.TagRepository;
-import com.openwebinars.todo.repos.TaskRepository;
-import com.openwebinars.todo.users.User;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import com.pidaw.todo.dto.EditTaskDto;
+import com.pidaw.todo.dto.GetTaskDto;
+import com.pidaw.todo.error.TaskNotFoundException;
+import com.pidaw.todo.model.Category;
+import com.pidaw.todo.model.Tag;
+import com.pidaw.todo.model.Task;
+import com.pidaw.todo.repos.CategoryRepository;
+import com.pidaw.todo.repos.TagRepository;
+import com.pidaw.todo.repos.TaskRepository;
+import com.pidaw.todo.users.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
@@ -175,5 +170,37 @@ public class TaskService {
         }
         return tasks;
     }
+    /* Listar tareas filtradas por parametros */
+    public List<GetTaskDto> searchTasks(String title,String description,Task.Priority priority,
+                                        Boolean completed,LocalDate deadline,User autor, String category) {
+        List<Task> tasks;
+
+        if (title != null && !title.isBlank()) {
+            tasks = taskRepository.findByTitleContainingIgnoreCaseAndAuthor(title, autor);
+        } else if (description != null && !description.isBlank()) {
+            tasks = taskRepository.findByDescriptionContainingIgnoreCaseAndAuthor(description, autor);
+        } else if (priority != null) {
+            tasks = taskRepository.findByPriorityAndAuthor(priority, autor);
+        } else if (completed != null) {
+            tasks = taskRepository.findByCompletedAndAuthor(completed, autor);
+        } else if (deadline != null) {
+            tasks = taskRepository.findByDeadlineLessThanEqualAndAuthor(deadline, autor);
+        } else if (category != null) {
+            Category cat = categoryRepository.findByTitle(category);
+            tasks = taskRepository.findByCategoryAndAuthor(cat, autor);
+        }  else {
+            // Si no se pasa ningún filtro, devolvemos todas las tareas del autor
+            tasks = taskRepository.findByAuthor(autor);
+        }
+
+        if (tasks.isEmpty()) {
+            throw new TaskNotFoundException("No se encontraron tareas con los filtros aplicados.");
+        }
+
+        return tasks.stream()
+                .map(GetTaskDto::of)
+                .toList();
+    }
+
 
 }
