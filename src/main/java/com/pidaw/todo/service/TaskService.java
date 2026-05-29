@@ -1,6 +1,7 @@
 package com.pidaw.todo.service;
 
 import com.pidaw.todo.dto.EditTaskDto;
+import com.pidaw.todo.dto.GetTaskDto;
 import com.pidaw.todo.error.TaskNotFoundException;
 import com.pidaw.todo.model.Category;
 import com.pidaw.todo.model.Tag;
@@ -166,5 +167,37 @@ public class TaskService {
         }
         return tasks;
     }
+    /* Listar tareas filtradas por parametros */
+    public List<GetTaskDto> searchTasks(String title,String description,Task.Priority priority,
+                                        Boolean completed,LocalDate deadline,User autor, String category) {
+        List<Task> tasks;
+
+        if (title != null && !title.isBlank()) {
+            tasks = taskRepository.findByTitleContainingIgnoreCaseAndAuthor(title, autor);
+        } else if (description != null && !description.isBlank()) {
+            tasks = taskRepository.findByDescriptionContainingIgnoreCaseAndAuthor(description, autor);
+        } else if (priority != null) {
+            tasks = taskRepository.findByPriorityAndAuthor(priority, autor);
+        } else if (completed != null) {
+            tasks = taskRepository.findByCompletedAndAuthor(completed, autor);
+        } else if (deadline != null) {
+            tasks = taskRepository.findByDeadlineLessThanEqualAndAuthor(deadline, autor);
+        } else if (category != null) {
+            Category cat = categoryRepository.findByTitle(category);
+            tasks = taskRepository.findByCategoryAndAuthor(cat, autor);
+        }  else {
+            // Si no se pasa ningún filtro, devolvemos todas las tareas del autor
+            tasks = taskRepository.findByAuthor(autor);
+        }
+
+        if (tasks.isEmpty()) {
+            throw new TaskNotFoundException("No se encontraron tareas con los filtros aplicados.");
+        }
+
+        return tasks.stream()
+                .map(GetTaskDto::of)
+                .toList();
+    }
+
 
 }
