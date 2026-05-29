@@ -18,12 +18,13 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 @PreAuthorize("hasRole('ADMIN')")
 @SecurityRequirement(name="basicAuth")
 @Tag(name = "Admin", description = "Endpoints de administración")
@@ -128,8 +129,8 @@ public class AdminController {
     /* Listar categorias */
     @Operation(summary = "Listar categorias", description = "Listar todas las categorias de la aplicación")
     @GetMapping("/categories")
-    public List<Category> getAllCategories() {
-        return categoryService.listCategories();
+    public List<Category> getAllCategories(@AuthenticationPrincipal User user) {
+        return categoryService.listCategories(user);
     }
 
     /* Obtener categoria */
@@ -137,8 +138,9 @@ public class AdminController {
     @GetMapping("/category/{id}")
     public Category getCategory(
             @Parameter(description = "ID de la categoria", required = true)
-            @PathVariable Long id) {
-        return categoryService.findByID(id);
+            @PathVariable Long id,
+            @AuthenticationPrincipal User user) {
+        return categoryService.findByID(id, user);
     }
 
     /* Crear categoría */
@@ -155,8 +157,9 @@ public class AdminController {
                                     value = "{ \"title\": \"Nueva Categoría\" }"
                             )
                     )
-            ) @org.springframework.web.bind.annotation.RequestBody Category category) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.save(category));
+            ) @org.springframework.web.bind.annotation.RequestBody Category category,
+            @AuthenticationPrincipal User user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.save(category,user));
     }
 
     /* Editar categoria */
@@ -166,16 +169,18 @@ public class AdminController {
             @Parameter(description = "ID de la categoría a editar", required = true)
             @PathVariable Long id,
             @Parameter(description = "Datos modificados de la categoria", required = true)
-            @RequestBody Category  category) {
-        return ResponseEntity.ok(categoryService.edit(id, category));
+            @RequestBody Category  category,
+            @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(categoryService.edit(id, category, user));
     }
     /* Borrar categoria */
     @Operation(summary = "Eliminar categoria", description = "Borrar una categoría por su ID")
     @DeleteMapping("/category/{id}")
     public ResponseEntity<?> deleteCategory(
             @Parameter(description = "ID de la categoría a eliminar", required = true)
-            @PathVariable Long id) {
-        categoryService.deleteById(id);
+            @PathVariable Long id,
+            @AuthenticationPrincipal User user) {
+        categoryService.deleteById(id,user);
         return ResponseEntity.noContent().build();
     }
 

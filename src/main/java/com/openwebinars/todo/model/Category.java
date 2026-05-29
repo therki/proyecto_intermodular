@@ -1,10 +1,10 @@
 package com.openwebinars.todo.model;
 
+import com.pidaw.todo.users.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
-
 import java.util.Objects;
 
 @Getter
@@ -23,6 +23,11 @@ public class Category {
 
     private String title;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
@@ -38,4 +43,5 @@ public class Category {
     public final int hashCode() {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
+
 }

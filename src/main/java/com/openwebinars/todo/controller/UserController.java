@@ -1,12 +1,15 @@
 package com.openwebinars.todo.controller;
 
-import com.openwebinars.todo.dto.EditTaskDto;
-import com.openwebinars.todo.model.Category;
-import com.openwebinars.todo.model.Task;
-import com.openwebinars.todo.service.CategoryService;
-import com.openwebinars.todo.service.TagService;
-import com.openwebinars.todo.service.TaskService;
-import com.openwebinars.todo.users.*;
+import com.pidaw.todo.dto.EditTaskDto;
+import com.pidaw.todo.dto.GetTaskDto;
+import com.pidaw.todo.model.Category;
+import com.pidaw.todo.model.Task;
+import com.pidaw.todo.service.CategoryService;
+import com.pidaw.todo.service.TagService;
+import com.pidaw.todo.service.TaskService;
+import com.pidaw.todo.users.EditUserCommand;
+import com.pidaw.todo.users.User;
+import com.pidaw.todo.users.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,7 +28,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 @PreAuthorize("hasRole('USUARIO')")
 @SecurityRequirement(name="basicAuth")
 @Tag(name = "Usuario", description = "Endpoints del Usuario")
@@ -228,13 +231,36 @@ public class UserController {
     /* Listar categorias */
     @Operation(summary = "Listar etiquetas", description = "Listar etiquetas del usuario")
     @GetMapping("/categories")
-    public List<Category> listCategories() {
-        return categoryService.listCategories();
+    public List<Category> listCategories(@AuthenticationPrincipal User user) {
+        return categoryService.listCategories(user);
+    }
+    /* Búsqueda Unificada*/
+    @Operation(summary = "Buscar tareas", description = "Busca tareas  utilizando filtros opcionales")
+    @GetMapping("/task/search")
+    public List<GetTaskDto> searchTasks(
+            @Parameter(description = "Filtrar por título")
+            @RequestParam(required = false) String title,
+            @Parameter(description = "Filtrar por descripción")
+            @RequestParam(required = false) String description,
+            @Parameter(description = "Filtrar por prioridad (BAJA, MEDIA, ALTA)")
+            @RequestParam(required = false) Task.Priority priority,
+            @Parameter(description = "Filtrar por estado completado (true/false)")
+            @RequestParam(required = false) Boolean completed,
+            @Parameter(description = "Filtrar por fecha límite (formato YYYY-MM-DD)")
+            @RequestParam(required = false) String deadline,
+            @Parameter(description = "Filtrar por categoria")
+            @RequestParam(required = false) String category,
+            @Parameter(hidden = true)
+            @AuthenticationPrincipal User user) {
+
+        LocalDate deadlineDate = (deadline != null && !deadline.isBlank()) ? LocalDate.parse(deadline) : null;
+
+        return taskService.searchTasks(title, description, priority, completed, deadlineDate, user,category);
     }
     /* Editar datos propios del usuario */
     @Operation(summary = "Editar información de usuario", description = "Actualizar información propia del usuario")
     @PutMapping("/edit-profile")
-    public NewUserResponse editSelf(
+    public User editSelf(
             @Parameter(hidden = true)
             @AuthenticationPrincipal User user,
             @Parameter(description = "Datos actualizados del usuario", required = true)
@@ -242,6 +268,12 @@ public class UserController {
 
         Long userId = user.getId();
         return userService.updatePartialUser(userId, userInfo);
+    }
+    /* Obtener mi perfil de usuario */
+    @Operation(summary = "Obtener mi perfil", description = "Obtiene la información del usuario autenticado")
+    @GetMapping("/profile")
+    public User getMyProfile(@AuthenticationPrincipal User user) {
+        return user;
     }
 
 }
