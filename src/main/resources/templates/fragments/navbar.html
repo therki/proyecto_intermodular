@@ -1,0 +1,49 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+
+<body>
+    <!-- Definir clase por rol para diferentes colores-->
+    <nav th:class="${user.role} == 'ADMIN' ? 'navbar navbar-admin' : (${user.role} == 'GESTOR' ? 'navbar navbar-gestor' : 'navbar navbar-user')"
+        th:fragment="navbar(title)">
+        <div class="container m-0 w-100">
+            <!-- Cabecera -->
+            <span class="navbar-brand">
+                <img th:src="@{/imgs/logo_todo.png}" alt="Logo aplicación TODO" id="logoNav" />
+                <span th:text="${title}">Dashboard</span>
+            </span>
+            <!-- Bloque botones -->
+            <div class="navbar-actions">
+                <span class="text-white me-3">
+                    <i class="fas fa-user-circle me-1"></i>
+                    <span th:text="${user.username}"></span>
+                </span>
+
+                <a th:href="@{/admin/dashboard}" class="btn btn-outline-light btn-sm me-2"
+                    sec:authorize="hasRole('ADMIN')">
+                    <i class="fas fa-arrow-left me-1"></i>
+                    Volver
+                </a>
+
+                <a th:href="@{/gestor/dashboard}" class="btn btn-outline-light btn-sm me-2"
+                    sec:authorize="hasRole('GESTOR')">
+                    <i class="fas fa-arrow-left me-1"></i>
+                    Volver
+                </a>
+                <a th:href="@{/user/dashboard}" class="btn btn-outline-light btn-sm me-2"
+                    sec:authorize="hasRole('USUARIO')">
+                    <i class="fas fa-arrow-left me-1"></i>
+                    Volver
+                </a>
+
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-outline-light btn-sm">
+                        <i class="fas fa-sign-out-alt me-1"></i>
+                        Cerrar Sesión
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+</body>
+
+</html>
