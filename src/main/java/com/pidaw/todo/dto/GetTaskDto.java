@@ -29,7 +29,7 @@ public record GetTaskDto(
                 t.getDescription(),
                 t.isCompleted(),
                 t.getCreatedAt(),
-                (t.getDeadline() != null) ? LocalDate.from(t.getDeadline().atStartOfDay()) :null,
+                (t.getDeadline() != null) ? t.getDeadline() :null,
                 t.getPriority(),
                 (t.getCategory() != null) ? t.getCategory().getTitle() : "Sin categoría",
                 t.getTags().stream()
