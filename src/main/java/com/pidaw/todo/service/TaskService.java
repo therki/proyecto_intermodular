@@ -77,7 +77,7 @@ public class TaskService {
                     t.setTitle(cmd.title());
                     t.setDescription(cmd.description());
                     t.setCompleted(cmd.completed());
-                    t.setDeadline(LocalDate.from(cmd.deadline()));
+                    t.setDeadline(cmd.deadline());
                     t.setPriority(cmd.priority());
                     return  taskRepository.save(t);
                 }
