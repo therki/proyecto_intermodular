@@ -50,11 +50,11 @@ public class SecurityConfig {
                                 "/login",
                                 "/css/**",
                                 "/js/**",
-                                "/images/**"
+                                "/imgs/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
-                        // Vistas MVC (protegidas por roles)
+                        // Vistas MVC 
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/gestor/**").hasAnyRole("ADMIN", "GESTOR")
                         .requestMatchers("/user/**").hasAnyRole("ADMIN", "GESTOR", "USUARIO")
@@ -80,7 +80,6 @@ public class SecurityConfig {
                 )
                 .exceptionHandling(excep -> {
                     excep.accessDeniedHandler(accessDeniedHandler);
-                    // Para las páginas normales, redirige al login
                     excep.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"));
                 })
                 .sessionManagement(session ->
