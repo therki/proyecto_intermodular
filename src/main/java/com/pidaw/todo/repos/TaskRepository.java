@@ -1,6 +1,7 @@
 package com.pidaw.todo.repos;
 
 import com.pidaw.todo.model.Category;
+import com.pidaw.todo.model.Tag;
 import com.pidaw.todo.model.Task;
 import com.pidaw.todo.users.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -48,6 +49,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     @Query("SELECT DISTINCT t FROM Task t JOIN t.tags tag WHERE tag.name IN :tagNames AND t.author = :author")
     List<Task> findByTagNamesAndAuthor(@Param("tagNames") List<String> tagName, @Param("author") User author);
-
+    @Query("SELECT DISTINCT t FROM Task t JOIN t.tags tag WHERE tag = :tag")
+    List<Task> findByTagsContains(@Param("tag") Tag tag);
 
 }

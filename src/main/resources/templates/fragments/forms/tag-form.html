@@ -39,7 +39,7 @@
             const tagName = $('#tagName').val().trim();
 
             // Validaciones
-            if (!tagName || tagName.trim()) {
+            if (!tagName || tagName.trim()==='') {
                 $('#tagName').addClass('is-invalid');
                 showNotification('El nombre de la etiqueta es requerido', 'danger');
                 return;

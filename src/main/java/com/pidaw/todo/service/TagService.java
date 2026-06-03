@@ -1,7 +1,9 @@
 package com.pidaw.todo.service;
 
 import com.pidaw.todo.model.Tag;
+import com.pidaw.todo.model.Task;
 import com.pidaw.todo.repos.TagRepository;
+import com.pidaw.todo.repos.TaskRepository;
 import com.pidaw.todo.users.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TagService {
     private final TagRepository tagRepository;
+    private final TaskRepository taskRepository;
 
     /* Listar todas  etiquetas */
     public List<Tag> findAll(){
@@ -65,6 +68,15 @@ public class TagService {
                 .filter(t->t.getUser().getId().equals(user.getId()))
                 .orElseThrow(() -> new RuntimeException("Etiqueta no encontrada"));
         ;
+        List<Task> tasksWithTag = taskRepository.findByTagsContains(tag);
+        
+        // Eliminar la etiqueta de cada tarea
+        for (Task task : tasksWithTag) {
+            task.getTags().remove(tag);
+            taskRepository.save(task);
+        }
+        
+        // Ahora sí, eliminar la etiqueta
         tagRepository.deleteById(id);
     }
     /* Buscar por usuario */
