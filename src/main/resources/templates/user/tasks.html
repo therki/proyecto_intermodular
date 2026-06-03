@@ -163,7 +163,7 @@
                 method: 'GET',
                 success: function (tasks) {
                     allTasks = tasks;
-                    loadFilterTagsOptions(); // Extrae las etiquetas existentes para el buscador
+                    loadFilterTagsOptions();
                     applyFilters();
                 },
                 error: function (xhr) {
@@ -311,8 +311,16 @@
             const task = allTasks.find(t => t.id === id);
             if (!task) return;
 
-            const updatedTask = { ...task, completed: !currentStatus };
-            if (updatedTask.category) updatedTask.category = updatedTask.category.id;
+            const updatedTask = {
+                id: task.id,
+                title: task.title,
+                description: task.description,
+                completed: !currentStatus,
+                deadline: task.deadline,
+                priority: task.priority,
+                categoryId: task.category ? task.category.id : null,
+                tagsId: task.tags ? task.tags.map(t => t.id) : []
+            };
 
             $.ajax({
                 url: `/api/user/task/${id}`,
@@ -353,13 +361,6 @@
             }
             applyFilters();
         }
-        /* Mostrr notificación */
-        function showNotification(message, type) {
-            const alert = $(`<div class="alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3" style="z-index: 9999; min-width: 300px;">${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>`);
-            $('body').append(alert);
-            setTimeout(() => alert.fadeOut(() => alert.remove()), 3000);
-        }
-
         /* Inicializar*/
         $(document).ready(function () {
             // Inicializar el multiselect estético de las etiquetas en la barra de filtros

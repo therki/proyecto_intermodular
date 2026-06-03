@@ -117,7 +117,6 @@
 
             // Comprobar si es edicion o creacion
             const categoryId = $("#categoryId").val();
-            const userId = $("#categoryUserId").val();
             const method = categoryId ? "PUT" : "POST";
             let url = categoryId ? `/api/gestor/category/${categoryId}` : "/api/gestor/category";
 
@@ -140,14 +139,12 @@
         function editCategory(id) {
             const category = allCategories.find((c) => c.id === id);
             if (category) {
-                // Protección extra por si se invoca la función manualmente desde consola
                 if (category.user && category.user.id !== currentUserId) {
                     showNotification("No tienes permisos para editar esta categoria", "danger");
                     return;
                 }
                 $("#categoryId").val(category.id);
                 $("#categoryTitle").val(category.title);
-                $("#categoryUserId").val(category.user ? category.user.id : "");
                 $("#categoryModal").modal("show");
             }
         }
@@ -166,7 +163,7 @@
                     method: "DELETE",
                     success: function () {
                         loadCategories();
-                        showNotification("CategoriaBox eliminada", "success");
+                        showNotification("Categoria eliminada", "success");
                     },
                     error: function (xhr) {
                         showNotification(xhr.responseJSON?.message || "Error al eliminar", "danger");
@@ -178,7 +175,6 @@
         function resetCategoryForm() {
             $("#categoryId").val("");
             $("#categoryTitle").val("");
-            $("#categoryUserId").val(currentUserId); // Asigna por defecto el usuario actual al crear
             $("#categoryForm")[0].reset();
         }
 
