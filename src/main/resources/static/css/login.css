@@ -4,6 +4,8 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
+    background: linear-gradient(135deg, #4c4874 0%, #805873 50%, #deaeaa 100%);
+
 }
 .login-wrapper .card {
   border-radius: 20px;
