@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <!-- Modal Etiqueta -->
+    <div class="modal fade" id="tagModal" tabindex="-1" th:fragment="tagModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-tag me-2"></i>
+                        <span id="modalTagTitle">Nueva Etiqueta</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="tagForm" th:fragment="tagForm">
+                        <input type="hidden" id="tagId">
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">Nombre de la etiqueta *</label>
+                            <input type="text" class="form-control" id="tagName" required
+                                placeholder="Ej: urgente, trabajo, personal">
+                            <div class="invalid-feedback">El nombre de la etiqueta es requerido</div>
+                            <small class="text-muted">Maximo 50 caracteres, sin espacios especiales</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveTag()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:fragment="tagModalScripts">
+        /* Guardar etiqueta */
+        function saveTag() {
+            const tagName = $('#tagName').val().trim();
+
+            // Validaciones
+            if (!tagName || tagName.trim()) {
+                $('#tagName').addClass('is-invalid');
+                showNotification('El nombre de la etiqueta es requerido', 'danger');
+                return;
+            }
+            $('#tagName').removeClass('is-invalid');
+
+            if (tagName.length > 50) {
+                showNotification('El nombre de la etiqueta no puede exceder los 50 caracteres', 'danger');
+                return;
+            }
+
+            const tagData = {
+                name: tagName
+            };
+
+            const tagId = $('#tagId').val();
+            const method = tagId ? 'PUT' : 'POST';
+            const url = tagId ? `/api/user/tag/${tagId}` : '/api/user/tag';
+
+            $.ajax({
+                url: url,
+                method: method,
+                contentType: 'application/json',
+                data: JSON.stringify(tagData),
+                success: function () {
+                    $('#tagModal').modal('hide');
+                    if (typeof loadTags === 'function') {
+                        loadTags();
+                    }
+                    showNotification(tagId ? 'Etiqueta actualizada correctamente' : 'Etiqueta creada correctamente', 'success');
+                },
+                error: function (xhr) {
+                    let message = 'Error al guardar la etiqueta';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        message = xhr.responseJSON.message;
+                    }
+                    showNotification(message, 'danger');
+                }
+            });
+        }
+        /* Editar etiqueta */
+        function editTag(id, name) {
+            $('#modalTagTitle').text('Editar Etiqueta');
+            $('#tagId').val(id);
+            $('#tagName').val(name);
+            $('#tagModal').modal('show');
+        }
+        /* Limpiar formulario */
+        function resetTagForm() {
+            $('#modalTagTitle').text('Nueva Etiqueta');
+            $('#tagId').val('');
+            $('#tagName').val('');
+            $('#tagName').removeClass('is-invalid');
+            $('#tagForm')[0].reset();
+        }
+        /* Eliminar tag */
+        function deleteTag(id, name) {
+            // Confirmacion - alerta
+            if (confirm(`¿Estás seguro de eliminar la etiqueta "${name}"?\nNota: Las tareas que usen esta etiqueta perderán la asociación.`)) {
+                $.ajax({
+                    url: `/api/user/tag/${id}`,
+                    method: 'DELETE',
+                    success: function () {
+                        if (typeof loadTags === 'function') {
+                            loadTags();
+                        }
+                        showNotification('Etiqueta eliminada correctamente', 'success');
+                    },
+                    error: function (xhr) {
+                        let message = 'Error al eliminar la etiqueta';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            message = xhr.responseJSON.message;
+                        }
+                        showNotification(message, 'danger');
+                    }
+                });
+            }
+        }
+        /* Mostrar notificaicon */
+        function showNotification(message, type) {
+            const alert = $(`
+            <div class="alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3" style="z-index: 9999; min-width: 300px;">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `);
+            $('body').append(alert);
+            setTimeout(() => alert.fadeOut(() => alert.remove()), 3000);
+        }
+    </script>
+</body>
+
+</html>
