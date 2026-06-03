@@ -1,0 +1,45 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <title>TODO App</title>
+    <link rel="icon" type="image/png" th:href="@{/imgs/logo_todo.png}" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+    <!-- Barra de navegacion -->
+    <div th:replace="~{fragments/navbar :: navbar (title='Dashboard del Gestor', user=${user})}"></div>
+
+    <div class="container mt-4" id="gestor-dashboard">
+        <div class="row g-3">
+            <!-- Card de categorias -->
+            <div class="col-12 col-sm-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body d-flex flex-column">
+                        <div class="card-title d-flex align-items-center gap-2 mb-3">
+                            <i class="bi bi-tags-fill text-primary fs-4"></i>
+                            <h5 class="mb-0">Categorias</h5>
+                        </div>
+                        <p class="card-text">
+                            Listado y gestion de las categorias de la aplicacion.
+                        </p>
+                        <div class="card-action mt-auto">
+                            <a th:href="@{/gestor/categories}" class="btn btn-primary">
+                                <i class="bi bi-arrow-right-circle me-1"></i> Gestionar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
