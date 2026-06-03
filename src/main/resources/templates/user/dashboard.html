@@ -13,7 +13,8 @@
     <link rel="stylesheet" th:href="@{/css/forms.css}" />
 </head>
 
-<body>
+<body th:classappend="${user != null && user.role.name() == 'ADMIN'} ? 'role-admin' : 
+                      (${user != null && user.role.name() == 'GESTOR'} ? 'role-gestor' : 'role-usuario')">
     <!-- Barra de navegacion -->
     <div th:replace="~{fragments/navbar :: navbar (title='Mi Dashboard', user=${user})}"></div>
 
@@ -26,24 +27,23 @@
             <!-- Totales-->
             <div class="col-6 col-md-3">
                 <div class="bg-white rounded-3 p-3 shadow-sm text-center h-100">
-                    <i class="fas fa-tasks text-primary fs-4 mb-2"></i>
+                    <i class="fas fa-tasks  fs-4 mb-2" style="color: var(--color-logo-primary);"></i>
                     <div class="fs-3 fw-bold" style="color: var(--color-logo-primary);" id="totalTasks">-</div>
                     <div class="text-muted small">Total Tareas</div>
                 </div>
             </div>
-            <!-- Completas-->
             <div class="col-6 col-md-3">
                 <div class="bg-white rounded-3 p-3 shadow-sm text-center h-100">
-                    <i class="fas fa-check-circle text-success fs-4 mb-2"></i>
-                    <div class="fs-3 fw-bold text-success" id="completedTasks">-</div>
+                    <i class="fas fa-check-circle fs-4 mb-2" style="color: #87CEEB;"></i>
+                    <div class="fs-3 fw-bold" style="color: #87CEEB;" id="completedTasks">-</div>
                     <div class="text-muted small">Completadas</div>
                 </div>
             </div>
             <!-- PEndientes-->
             <div class="col-6 col-md-3">
                 <div class="bg-white rounded-3 p-3 shadow-sm text-center h-100">
-                    <i class="fas fa-clock text-warning fs-4 mb-2"></i>
-                    <div class="fs-3 fw-bold text-warning" id="pendingTasks">-</div>
+                    <i class="fas fa-clock fs-4 mb-2" style="color: #DEAEAA;"></i>
+                    <div class="fs-3 fw-bold" style="color: #DEAEAA;" id="pendingTasks">-</div>
                     <div class="text-muted small">Pendientes</div>
                 </div>
             </div>
@@ -64,7 +64,7 @@
                 <div class="card h-100 shadow-sm">
                     <div class="card-body d-flex flex-column">
                         <div class="d-flex align-items-center gap-2 mb-3">
-                            <i class="fas fa-tasks text-primary fs-4"></i>
+                            <i class="fas fa-tasks  fs-4" style="color: var(--color-primary);"></i>
                             <h5 class="mb-0">Mis Tareas</h5>
                         </div>
                         <p class="card-text text-muted">Gestiona todas tus tareas pendientes y completadas.</p>
@@ -76,35 +76,36 @@
                     </div>
                 </div>
             </div>
-            <!-- CArd etiquetas-->
+            <!-- Card etiquetas (tono primario del rol) -->
             <div class="col-sm-6 col-lg-4">
                 <div class="card h-100 shadow-sm">
                     <div class="card-body d-flex flex-column">
                         <div class="d-flex align-items-center gap-2 mb-3">
-                            <i class="fas fa-tags text-success fs-4"></i>
+                            <i class="fas fa-tags fs-4" style="color: var(--color-primary);"></i>
                             <h5 class="mb-0">Mis Etiquetas</h5>
                         </div>
                         <p class="card-text text-muted">Organiza tus tareas con etiquetas personalizadas.</p>
                         <div class="mt-auto">
-                            <a th:href="@{/user/tags}" class="btn btn-success">
+                            <a th:href="@{/user/tags}" class="btn btn-primary">
                                 <i class="fas fa-arrow-right me-1"></i> Ir a Etiquetas
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Card para actualizacion de perfil-->
+
+            <!-- Card editar perfil  -->
             <div class="col-sm-6 col-lg-4">
                 <div class="card h-100 shadow-sm" style="cursor: pointer;" data-bs-toggle="modal"
                     data-bs-target="#profileModal" onclick="loadProfileData(); resetProfileForm();">
                     <div class="card-body d-flex flex-column">
                         <div class="d-flex align-items-center gap-2 mb-3">
-                            <i class="fas fa-user-edit text-warning fs-4"></i>
+                            <i class="fas fa-user-edit fs-4" style="color: #87CEEB"></i>
                             <h5 class="mb-0">Editar Perfil</h5>
                         </div>
                         <p class="card-text text-muted">Actualiza tu informacion personal y contrasena.</p>
                         <div class="mt-auto">
-                            <span class="btn btn-warning">
+                            <span class="btn"  style="background-color: #87CEEB">
                                 <i class="fas fa-edit me-1"></i> Editar Perfil
                             </span>
                         </div>

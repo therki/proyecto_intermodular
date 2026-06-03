@@ -17,7 +17,8 @@
 
 </head>
 
-<body>
+<body th:classappend="${user != null && user.role.name() == 'ADMIN'} ? 'role-admin' : 
+                      (${user != null && user.role.name() == 'GESTOR'} ? 'role-gestor' : 'role-usuario')">
     <div th:replace="~{fragments/navbar :: navbar (title='Dashboard del Usuario', user=${user})}"></div>
 
     <div th:replace="~{fragments/forms/task-form :: taskModal}"></div>
@@ -216,7 +217,7 @@
                                             <i class="${task.completed ? 'fas fa-check-circle' : 'far fa-circle'} fa-lg"></i>
                                         </button>
                                         <button class="btn btn-sm btn-link text-dark p-1 me-1" onclick="editTask(${task.id})" title="Editar">
-                                            <i class="fas fa-edit fa-lg"></i>
+                                            <i class="fas fa-edit fa-lg" style="color: #DEAEAA"></i>
                                         </button>
                                         <button class="btn btn-sm btn-link text-danger p-1" onclick="deleteTask(${task.id}, '${task.title}')" title="Eliminar">
                                             <i class="fas fa-trash fa-lg"></i>

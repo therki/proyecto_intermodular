@@ -13,7 +13,8 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
-<body>
+<body th:classappend="${user != null && user.role.name() == 'ADMIN'} ? 'role-admin' : 
+                      (${user != null && user.role.name() == 'GESTOR'} ? 'role-gestor' : 'role-usuario')">
   <!-- Barra de navegacion-->
   <div th:replace="~{fragments/navbar :: navbar (title='Panel Administrador', user=${user})}"></div>
 
@@ -24,7 +25,7 @@
         <div class="card h-100 shadow-sm stat-card">
           <div class="card-body">
             <div class="card-title d-flex align-items-center gap-2 mb-3">
-              <i class="bi bi-people-fill text-primary fs-4"></i>
+              <i class="bi bi-people-fill  fs-4" style="color: var(--color-primary)"></i>
               <h5 class="mb-0">Usuarios</h5>
 
             </div>
@@ -45,7 +46,7 @@
         <div class="card h-100 shadow-sm stat-card">
           <div class="card-body d-flex flex-column">
             <div class="card-title d-flex align-items-center gap-2 mb-3">
-              <i class="bi bi-tags-fill text-primary fs-4"></i>
+              <i class="bi bi-tags-fill  fs-4" style="color: var(--color-primary)"></i>
               <h5 class="mb-0">Categorías</h5>
             </div>
             <p class="card-text">

@@ -2,57 +2,48 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 
 <body>
-    <nav th:class="${user.role} == 'ADMIN' ? 'navbar navbar-expand-lg navbar-dark navbar-admin' : (${user.role} == 'GESTOR' ? 'navbar navbar-expand-lg navbar-dark navbar-gestor' : 'navbar navbar-expand-lg navbar-dark navbar-user')"
-        th:fragment="navbar(title)">
-        <div class="container-fluid">
-            <!-- Logo y titulo-->
-            <span class="navbar-brand">
-                <img th:src="@{/imgs/logo_todo.png}" alt="Logo aplicación TODO" id="logoNav" />
-                <span th:text="${title}">Panel</span>
-            </span>
-            <!-- Boton hamburguesa-->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
-                aria-controls="navbarContent" aria-expanded="false" aria-label="Abrir menú">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <!-- Contenido-->
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <div class="navbar-nav ms-auto align-items-lg-center gap-2 mt-2 mt-lg-0">
-                    <!-- Info usuario-->
-                    <span class="nav-item text-white-50 me-lg-3 text-center text-lg-start mb-2 mb-lg-0">
-                        <i class="fas fa-user-circle me-1"></i>
-                        <span th:text="${user.username}"></span>
-                    </span>
-                    <!-- Acciones-->
-                    <div class="nav-item text-center text-lg-start" sec:authorize="hasRole('ADMIN')">
-                        <a th:href="@{/admin/dashboard}" class="btn btn-outline-light btn-sm w-100 w-lg-auto">
-                            <i class="fas fa-arrow-left me-1"></i>Volver
-                        </a>
-                    </div>
-
-                    <div class="nav-item text-center text-lg-start" sec:authorize="hasRole('GESTOR')">
-                        <a th:href="@{/gestor/dashboard}" class="btn btn-outline-light btn-sm w-100 w-lg-auto">
-                            <i class="fas fa-arrow-left me-1"></i>Volver
-                        </a>
-                    </div>
-
-                    <div class="nav-item text-center text-lg-start" sec:authorize="hasRole('USUARIO')">
-                        <a th:href="@{/user/dashboard}" class="btn btn-outline-light btn-sm w-100 w-lg-auto">
-                            <i class="fas fa-arrow-left me-1"></i>Volver
-                        </a>
-                    </div>
-
-                    <div class="nav-item text-center text-lg-start">
-                        <form th:action="@{/logout}" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-outline-light btn-sm w-100 w-lg-auto">
-                                <i class="fas fa-sign-out-alt me-1"></i>Cerrar Sesión
-                            </button>
-                        </form>
-                    </div>
+<nav class="navbar navbar-expand-lg navbar-dark" th:fragment="navbar(title)">
+    <div class="container-fluid">
+        <span class="navbar-brand">
+            <img th:src="@{/imgs/logo_todo.png}" alt="Logo aplicación TODO" id="logoNav" />
+            <span th:text="${title}">Panel</span>
+        </span>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+            aria-controls="navbarContent" aria-expanded="false" aria-label="Abrir menú">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <div class="navbar-nav ms-auto align-items-lg-center gap-2 mt-2 mt-lg-0">
+                <span class="nav-item text-white-50 me-lg-3 text-center text-lg-start mb-2 mb-lg-0">
+                    <i class="fas fa-user-circle me-1"></i>
+                    <span th:text="${user.username}"></span>
+                </span>
+                <div class="nav-item text-center text-lg-start" sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/admin/dashboard}" class="btn btn-outline-light btn-sm w-100 w-lg-auto">
+                        <i class="fas fa-arrow-left me-1"></i>Volver
+                    </a>
+                </div>
+                <div class="nav-item text-center text-lg-start" sec:authorize="hasRole('GESTOR')">
+                    <a th:href="@{/gestor/dashboard}" class="btn btn-outline-light btn-sm w-100 w-lg-auto">
+                        <i class="fas fa-arrow-left me-1"></i>Volver
+                    </a>
+                </div>
+                <div class="nav-item text-center text-lg-start" sec:authorize="hasRole('USUARIO')">
+                    <a th:href="@{/user/dashboard}" class="btn btn-outline-light btn-sm w-100 w-lg-auto">
+                        <i class="fas fa-arrow-left me-1"></i>Volver
+                    </a>
+                </div>
+                <div class="nav-item text-center text-lg-start">
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-outline-light btn-sm w-100 w-lg-auto">
+                            <i class="fas fa-sign-out-alt me-1"></i>Cerrar Sesión
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
-    </nav>
+    </div>
+</nav>
 </body>
 
 </html>

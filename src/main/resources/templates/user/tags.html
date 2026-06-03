@@ -14,7 +14,8 @@
 
 </head>
 
-<body>
+<body th:classappend="${user != null && user.role.name() == 'ADMIN'} ? 'role-admin' : 
+                      (${user != null && user.role.name() == 'GESTOR'} ? 'role-gestor' : 'role-usuario')">
     <!-- Barra de navegacion -->
     <div th:replace="~{fragments/navbar :: navbar (title='Dashboard del Usuario', user=${user})}"></div>
     <!-- Modal de Etiqueta -->
@@ -22,7 +23,7 @@
 
     <div class="container mt-4">
         <div class="page-header mb-4">
-            <h2><i class="fas fa-tags me-2"></i>Mis Etiquetas</h2>
+            <h2><i class="fas fa-tags me-2" style="color: var(--color-primary)"></i>Mis Etiquetas</h2>
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tagModal" onclick="resetTagForm()">
                 <i class="fas fa-plus-circle me-2"></i>Nueva Etiqueta
             </button>
@@ -116,11 +117,7 @@
                         <p class="text-muted">
                             ${hasSearch ? 'No hay etiquetas que coincidan con tu búsqueda.' : 'Crea tu primera etiqueta para organizar mejor tus tareas.'}
                         </p>
-                        ${!hasSearch ? `
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tagModal" onclick="resetTagForm()">
-                                <i class="fas fa-plus-circle me-2"></i>Crear Primera Etiqueta
-                            </button>
-                        ` : ''}
+                        
                     </div>
                 </div>
             `);
@@ -133,11 +130,11 @@
                 <div class="col-md-3 col-sm-6 mb-3">
                     <div class="card tag-card h-100">
                         <div class="card-body text-center">
-                            <i class="fas fa-tag fa-2x text-primary mb-3"></i>
+                            <i class="fas fa-tag fa-2x mb-3" style="color: var(--color-primary)"></i>
                             <h5 class="tag-name">${tag.name}</h5>
                             <p class="text-muted small">ID: ${tag.id}</p>
                             <div class="mt-3">
-                                <button class="btn btn-sm btn-warning me-2" onclick="editTag(${tag.id}, '${tag.name}')" title="Editar">
+                                <button class="btn btn-sm  me-2" style="background-color: #DEAEAA" onclick="editTag(${tag.id}, '${tag.name}')" title="Editar">
                                     <i class="fas fa-edit"></i> Editar
                                 </button>
                                 <button class="btn btn-sm btn-danger" onclick="deleteTag(${tag.id}, '${tag.name}')" title="Eliminar">

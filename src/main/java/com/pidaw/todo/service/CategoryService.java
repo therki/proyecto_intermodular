@@ -20,7 +20,7 @@ public class CategoryService {
     public List<Category> listCategories(User user) {
         // Admin ver todas las categorias
         List<Category> userCategories;
-        if (user.getRole() == User.RoleType.ADMIN) {
+        if (user.getRole() != User.RoleType.USUARIO) {
             return categoryRepository.findAllWithUser(Sort.by("title").ascending());
         } else {
             // Rol usuario puede ver las propias más las del admin
