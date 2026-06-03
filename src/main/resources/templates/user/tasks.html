@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>TODO App</title>
+    <link rel="icon" type="image/png" th:href="@{/imgs/logo_todo.png}" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <!-- <style>
+        .completed-task {
+            opacity: 0.6;
+        }
+
+        .completed-task .task-card-title {
+            text-decoration: line-through;
+        }
+
+        .filter-bar {
+            display: flex;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Estilos específicos basados en tu mockup */
+        .task-card {
+            background-color: #e0e0e0;
+            /* Fondo gris suave del mockup */
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-card-body {
+            padding: 1.25rem;
+        }
+
+        .task-description-box {
+            background-color: #f1f3f5;
+            /* Caja interna gris claro para el texto */
+            border: 1px solid #adb5bd;
+            border-radius: 4px;
+            padding: 10px;
+            min-height: 80px;
+            font-size: 0.9rem;
+        }
+
+        .priority-badge {
+            font-weight: bold;
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+        }
+
+        /* Colores del mockup para las prioridades */
+        .priority-badge-alta {
+            background-color: #f25c64;
+            color: black;
+        }
+
+        .priority-badge-media {
+            background-color: #fbc658;
+            color: black;
+        }
+
+        .priority-badge-baja {
+            background-color: #a1e2a1;
+            color: black;
+        }
+
+        /* Ajuste visual para el buscador de Tom Select en la barra */
+        .ts-wrapper.form-control {
+            padding: 0 !important;
+            height: auto;
+        }
+
+        .ts-control {
+            border: 1px solid #ced4da !important;
+            border-radius: 0.25rem !important;
+        }
+    </style> -->
+</head>
+
+<body>
+    <div th:replace="~{fragments/navbar :: navbar (title='Dashboard del Usuario', user=${user})}"></div>
+
+    <div th:replace="~{fragments/forms/task-form :: taskModal}"></div>
+
+    <div class="container mt-4">
+        <div class="page-header mb-4">
+            <h2><i class="fas fa-tasks me-2"></i>Mis Tareas</h2>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#taskModal"
+                onclick="resetTaskForm(); loadTaskModalData();">
+                <i class="fas fa-plus-circle me-2"></i>Nueva Tarea
+            </button>
+        </div>
+
+        <div class="filter-bar w-100">
+            <div class="row items-align-center">
+                <div class="col-md-3 mb-2">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i
+                                class="fas fa-search text-muted"></i></span>
+                        <input type="text" class="form-control border-start-0" id="searchGlobal"
+                            placeholder="Buscar tarea...">
+                    </div>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <select id="filterTags" multiple placeholder="Filtrar por etiquetas..."></select>
+                </div>
+                <div class="col-md-2 mb-2">
+                    <select class="form-select" id="filterPriority">
+                        <option value="">Todas las prioridades</option>
+                        <option value="BAJA">Baja</option>
+                        <option value="MEDIA">Media</option>
+                        <option value="ALTA">Alta</option>
+                    </select>
+                </div>
+                <div class="col-md-2 mb-2">
+                    <select class="form-select" id="filterStatus">
+                        <option value="">Todos los estados</option>
+                        <option value="false">Pendientes</option>
+                        <option value="true">Completadas</option>
+                    </select>
+                </div>
+                <div class="col-md-2 mb-2">
+                    <button class="btn btn-secondary" onclick="clearFilters()">
+                        <i class="fas fa-eraser me-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4" id="tasksContainer">
+            <div class="col-12 text-center py-5" id="tasksLoader">
+                <i class="fas fa-spinner fa-spin fa-2x me-2 text-primary"></i>Cargando tareas...
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+
+    <script>
+        let allTasks = [];
+        let tagSelect = null;
+        /* Cargar listado de tareas */
+        function loadTasks() {
+            $.ajax({
+                url: '/api/user/tasks',
+                method: 'GET',
+                success: function (tasks) {
+                    allTasks = tasks;
+                    loadFilterTagsOptions(); // Extrae las etiquetas existentes para el buscador
+                    applyFilters();
+                },
+                error: function (xhr) {
+                    $('#tasksContainer').html('<div class="col-12 text-center text-danger py-4">Error al cargar tareas</div>');
+                }
+            });
+        }
+
+        // Cargar las opciones del buscador dinámico de etiquetas en base a las tareas
+        function loadFilterTagsOptions() {
+            const uniqueTags = new Set();
+            allTasks.forEach(task => {
+                if (task.tags && Array.isArray(task.tags)) {
+                    task.tags.forEach(tag => uniqueTags.add(tag.name || tag.title || tag));
+                }
+            });
+
+            if (tagSelect) {
+                tagSelect.clearOptions();
+                uniqueTags.forEach(tagName => {
+                    tagSelect.addOption({ value: tagName, text: tagName });
+                });
+                tagSelect.refreshOptions(false);
+            }
+        }
+        /* Aplicar filtros */
+        function applyFilters() {
+            const globalFilter = $('#searchGlobal').val().toLowerCase();
+            const priorityFilter = $('#filterPriority').val();
+            const statusFilter = $('#filterStatus').val();
+            const selectedTags = tagSelect ? tagSelect.getValue() : [];
+
+            let filteredTasks = [...allTasks];
+
+            // 1. Filtro único por Texto (Busca en título O descripción)
+            if (globalFilter) {
+                filteredTasks = filteredTasks.filter(t =>
+                    t.title.toLowerCase().includes(globalFilter) ||
+                    (t.description && t.description.toLowerCase().includes(globalFilter))
+                );
+            }
+
+            // 2. Filtro por Etiquetas múltiples (Coincidencia cruzada)
+            if (selectedTags && selectedTags.length > 0) {
+                filteredTasks = filteredTasks.filter(t => {
+                    if (!t.tags || t.tags.length === 0) return false;
+                    // Comprobamos si la tarea contiene AL MENOS una de las etiquetas seleccionadas
+                    const taskTagNames = t.tags.map(tag => (tag.name || tag.title || tag).toLowerCase());
+                    return selectedTags.some(tag => taskTagNames.includes(tag.toLowerCase()));
+                });
+            }
+
+            // 3. Filtro por Prioridad
+            if (priorityFilter) {
+                filteredTasks = filteredTasks.filter(t => t.priority === priorityFilter);
+            }
+
+            // 4. Filtro por Estado
+            if (statusFilter !== '') {
+                const completed = statusFilter === 'true';
+                filteredTasks = filteredTasks.filter(t => t.completed === completed);
+            }
+
+            displayTasks(filteredTasks);
+        }
+        /* Mostrar tareas */
+        function displayTasks(tasks) {
+            if (tasks.length === 0) {
+                $('#tasksContainer').html('<div class="col-12 text-center text-muted py-4">No hay tareas que coincidan con los filtros</div>');
+                return;
+            }
+
+            let html = '';
+            tasks.forEach(task => {
+                let badgePriorityClass = 'priority-badge-baja';
+                if (task.priority === 'ALTA') {
+                    badgePriorityClass = 'priority-badge-alta';
+                } else if (task.priority === 'MEDIA') {
+                    badgePriorityClass = 'priority-badge-media';
+                }
+
+                const rowClass = task.completed ? 'completed-task' : '';
+                const deadline = task.deadline ? new Date(task.deadline).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-';
+                const categoryName = task.category ? task.category.title : 'Sin categoría';
+
+                // Renderizado de las etiquetas internas de la tarjeta (si existen)
+                let tagsHtml = '';
+                if (task.tags && task.tags.length > 0) {
+                    tagsHtml = '<div class="mt-1">';
+                    task.tags.forEach(t => {
+                        tagsHtml += `<span class="badge bg-secondary me-1 text-white" style="font-size:0.7rem;">#${t.name || t.title || t}</span>`;
+                    });
+                    tagsHtml += '</div>';
+                }
+                // Card por cada tarea
+                html += `
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="task-card h-100 ${rowClass}">
+                            <div class="task-card-body d-flex flex-column justify-content-between h-100">
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="task-card-title text-truncate mb-0" style="max-width: 65%; font-weight: 500;" title="${task.title}">
+                                        ${task.title}
+                                    </h5>
+                                    <span class="priority-badge ${badgePriorityClass}">
+                                        ${task.priority}
+                                    </span>
+                                </div>
+
+                                <div class="task-description-box mb-3">
+                                    <p class="card-text text-muted mb-0">
+                                        ${task.description || 'Sin descripción detallada.'}
+                                    </p>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mt-auto">
+                                    <div class="small text-muted">
+                                        <span style="color: #6c5ce7; font-weight: 500;">Vencimiento:</span> ${deadline}
+                                        <br>
+                                        <small class="text-secondary"><i class="fas fa-folder me-1"></i>${categoryName}</small>
+                                        ${tagsHtml}
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <button class="btn btn-sm btn-link text-success p-1 me-2" onclick="toggleTaskStatus(${task.id}, ${task.completed})" title="${task.completed ? 'Marcar como pendiente' : 'Marcar como completada'}">
+                                            <i class="${task.completed ? 'fas fa-check-circle' : 'far fa-circle'} fa-lg"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-link text-dark p-1 me-1" onclick="editTask(${task.id})" title="Editar">
+                                            <i class="fas fa-edit fa-lg"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-link text-danger p-1" onclick="deleteTask(${task.id}, '${task.title}')" title="Eliminar">
+                                            <i class="fas fa-trash fa-lg"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            $('#tasksContainer').html(html);
+        }
+        /* ACtualizar estado de la tarea - completado */
+        function toggleTaskStatus(id, currentStatus) {
+            const task = allTasks.find(t => t.id === id);
+            if (!task) return;
+
+            const updatedTask = { ...task, completed: !currentStatus };
+            if (updatedTask.category) updatedTask.category = updatedTask.category.id;
+
+            $.ajax({
+                url: `/api/user/task/${id}`,
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(updatedTask),
+                success: function () {
+                    loadTasks();
+                },
+                error: function () {
+                    showNotification('Error al cambiar el estado de la tarea', 'danger');
+                }
+            });
+        }
+        /* Eliminar tarea */
+        function deleteTask(id, title) {
+            if (confirm(`¿Estás seguro de eliminar la tarea "${title}"?`)) {
+                $.ajax({
+                    url: `/api/user/task/${id}`,
+                    method: 'DELETE',
+                    success: function () {
+                        loadTasks();
+                        showNotification('Tarea eliminada correctamente', 'success');
+                    },
+                    error: function (xhr) {
+                        showNotification(xhr.responseJSON?.message || 'Error al eliminar la tarea', 'danger');
+                    }
+                });
+            }
+        }
+        /* Limpiar filtros */
+        function clearFilters() {
+            $('#searchGlobal').val('');
+            $('#filterPriority').val('');
+            $('#filterStatus').val('');
+            if (tagSelect) {
+                tagSelect.clear();
+            }
+            applyFilters();
+        }
+        /* Mostrr notificación */
+        function showNotification(message, type) {
+            const alert = $(`<div class="alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3" style="z-index: 9999; min-width: 300px;">${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>`);
+            $('body').append(alert);
+            setTimeout(() => alert.fadeOut(() => alert.remove()), 3000);
+        }
+
+        /* Inicializar*/
+        $(document).ready(function () {
+            // Inicializar el multiselect estético de las etiquetas en la barra de filtros
+            tagSelect = new TomSelect("#filterTags", {
+                plugins: ['remove_button'],
+                create: false,
+                maxItems: null,
+                valueField: 'value',
+                labelField: 'text',
+                searchField: 'text',
+                onChange: function () {
+                    applyFilters();
+                }
+            });
+
+            loadTasks();
+
+            // Listener - aplicar filtros al cambiar input
+            $('#searchGlobal, #filterPriority, #filterStatus').on('input change', function () {
+                applyFilters();
+            });
+
+            $('#taskModal').on('hidden.bs.modal', function () {
+                resetTaskForm();
+            });
+        });
+    </script>
+
+    <th:block th:replace="~{fragments/forms/task-form :: taskModalScripts}"></th:block>
+</body>
+
+</html>
