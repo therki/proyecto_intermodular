@@ -72,7 +72,7 @@ public class AdminController {
     }
 
     @Operation(summary = "Obtener usuario por Email", description = "Buscar usuario por su correo electrónico")
-    @GetMapping("/user/{email}")
+    @GetMapping("/user/email/{email}")
     public NewUserResponse getUser(
             @Parameter(description = "Email del usuario", required = true)
             @PathVariable String email) {
@@ -80,7 +80,6 @@ public class AdminController {
     }
 
     /* Crear usuario */
-    @Operation(summary = "Crear usuario", description = "Crea un nuevo usuario enviando un JSON con sus datos")
     @PostMapping("/user")
     public ResponseEntity<NewUserResponse> createUser(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -88,12 +87,13 @@ public class AdminController {
                     required = true,
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = User.class),
+                schema = @Schema(implementation = NewUserCommand.class),
                             examples = @ExampleObject(
-                                    value = "{ \"username\": \"nuevoUser\", \"password\": \"1234\", \"email\": \"correo@example.com\", \"role\": \"USER\" }"
+                    value = "{ \"username\": \"nuevoUser\", \"password\": \"1234\", \"email\": \"correo@example.com\", \"fullname\": \"Nombre Completo\", \"role\": \"USUARIO\" }"
+                )
                             )
                     )
-            ) NewUserCommand cmd) {
+        @org.springframework.web.bind.annotation.RequestBody NewUserCommand cmd) {  // ✅ Añade esta anotación
         User user = userService.register(cmd);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -108,7 +108,7 @@ public class AdminController {
             @Parameter(description = "ID del usuario", required = true)
             @PathVariable Long id,
             @Parameter(description = "Datos actualizados del usuario", required = true)
-            @RequestBody NewUserCommand cmd) {
+            @org.springframework.web.bind.annotation.RequestBody NewUserCommand cmd) {
 
         User user = userService.updateUser(id, cmd);
         return ResponseEntity.ok(NewUserResponse.of(user));
@@ -169,7 +169,7 @@ public class AdminController {
             @Parameter(description = "ID de la categoría a editar", required = true)
             @PathVariable Long id,
             @Parameter(description = "Datos modificados de la categoria", required = true)
-            @RequestBody Category  category,
+            @org.springframework.web.bind.annotation.RequestBody Category  category,
             @AuthenticationPrincipal User user) {
         return ResponseEntity.ok(categoryService.edit(id, category, user));
     }
