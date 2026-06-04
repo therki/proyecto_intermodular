@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<body>
+    <div class="modal fade" id="userModal" tabindex="-1" th:fragment="userForm">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-user me-2"></i>
+                        <span id="modalUserTitle">Nuevo Usuario</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="userForm">
+                        <input type="hidden" id="userId">
+                        <!-- Username-->
+                        <div class="mb-3">
+                            <label for="username" class="form-label">
+                                <i class="fas fa-user me-2"></i>Nombre de Usuario
+                            </label>
+                            <input type="text" class="form-control" id="username" required>
+                            <div class="invalid-feedback">El nombre de usuario es requerido</div>
+                        </div>
+                        <!--Nombre -->
+                        <div class="mb-3">
+                            <label for="fullname" class="form-label">
+                                <i class="fas fa-id-card me-2"></i>Nombre Completo
+                            </label>
+                            <input type="text" class="form-control" id="fullname">
+                        </div>
+                        <!-- Email-->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>Correo Electrónico
+                            </label>
+                            <input type="email" class="form-control" id="email" required>
+                            <div class="invalid-feedback">Ingrese un email válido</div>
+                        </div>
+                        <!-- Contraseña-->
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Contraseña
+                            </label>
+                            <input type="password" class="form-control" id="password">
+                            <small class="text-muted" id="passwordHelp">
+                                <i class="fas fa-info-circle me-1"></i>Mínimo 4 caracteres
+                            </small>
+                        </div>
+                        <!-- Rol-->
+                        <div class="mb-3">
+                            <label for="role" class="form-label">
+                                <i class="fas fa-tag me-2"></i>Rol
+                            </label>
+                            <select class="form-select" id="role">
+                                <option value="USUARIO">Usuario</option>
+                                <option value="GESTOR">Gestor</option>
+                                <option value="ADMIN">Administrador</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveUser()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

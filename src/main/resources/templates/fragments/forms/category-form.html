@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div th:fragment="categoryForm" class="modal fade" id="categoryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: var(--color-logo-primary); color: white;">
+                    <h5 class="modal-title"><i class="fas fa-tag me-2"></i>Categoria</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="categoryForm">
+                        <input type="hidden" id="categoryId" />
+                        <div class="mb-3">
+                            <label for="categoryTitle" class="form-label">Titulo</label>
+                            <input type="text" class="form-control" id="categoryTitle" placeholder="Titulo" required />
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveCategory()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <!-- Modal Tarea -->
+    <div class="modal fade" id="taskModal" tabindex="-1" th:fragment="taskModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-tasks me-2"></i>
+                        <span id="modalTitle">Nueva Tarea</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formulario -->
+                    <form id="taskForm" th:fragment="taskForm">
+                        <!-- Titulo -->
+                        <input type="hidden" id="taskId">
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">Titulo *</label>
+                            <input type="text" class="form-control" id="taskTitle" required
+                                placeholder="Ej: Revisar informe mensual">
+                            <div class="invalid-feedback">El titulo es requerido</div>
+                        </div>
+                        <!-- Descripcion-->
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">Descripcion</label>
+                            <textarea class="form-control" id="taskDescription" rows="3"
+                                placeholder="Describe los detalles de la tarea..."></textarea>
+                            <small class="text-muted">Opcional - Agrega informacion adicional sobre la tarea</small>
+                        </div>
+                        <div class="row">
+                            <!-- Selector de prioridad-->
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-medium">Prioridad</label>
+                                <select class="form-select" id="taskPriority">
+                                    <option value="BAJA">Baja</option>
+                                    <option value="MEDIA" selected>Media</option>
+                                    <option value="ALTA">Alta</option>
+                                </select>
+                                <small class="text-muted">Define la prioridad de la tarea</small>
+                            </div>
+                            <!-- Fecha limite-->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-medium">Fecha Limite</label>
+                                <input type="date" class="form-control" id="taskDeadline">
+                                <small class="text-muted">Opcional - Cuando debe completarse</small>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Categoria -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-medium">Categoria</label>
+                                <select class="form-select" id="taskCategoryId">
+                                    <option value="">Sin categoria</option>
+                                </select>
+                                <small class="text-muted">Agrupa la tarea en una categoria existente</small>
+                            </div>
+                            <!-- Etiquetas-->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-medium">Etiquetas</label>
+                                <select class="form-select" id="taskTags" multiple
+                                    placeholder="Selecciona etiquetas...">
+                                </select>
+                                <small class="text-muted">Haz clic para desplegar y seleccionar varias</small>
+                            </div>
+                            <!-- Check completado -->
+                            <div id="completedDiv" class="mb-3 form-check" style="display: none;">
+                                <input type="checkbox" class="form-check-input" id="taskCompleted">
+                                <label class="form-check-label" for="taskCompleted">Tarea completada</label>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveTask()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:fragment="taskModalScripts">
+        let allCategories = [];
+        let allTags = [];
+
+
+        /* Listar todas las categorias  - Para el selector*/
+        function loadCategoriesForModal() {
+            $.ajax({
+                url: '/api/user/categories',
+                method: 'GET',
+                success: function (categories) {
+                    allCategories = categories;
+                    let options = '<option value="">Sin categoría</option>';
+                    categories.forEach(cat => {
+                        options += `<option value="${cat.id}">${cat.title}</option>`;
+                    });
+                    $('#taskCategoryId').html(options);
+                }
+            });
+        }
+        /* Cargar listado de etiquetas */
+        function loadTagsForModal() {
+            $.ajax({
+                url: '/api/user/tags',
+                method: 'GET',
+                success: function (tags) {
+                    allTags = tags;
+                    let options = '';
+                    tags.forEach(tag => {
+                        options += `<option value="${tag.id}">${tag.name}</option>`;
+                    });
+                    $('#taskTags').html(options);
+                }
+            });
+        }
+        /* Guardar tarea */
+        function saveTask() {
+            const taskData = {
+                title: $('#taskTitle').val(),
+                description: $('#taskDescription').val(),
+                completed: $('#taskCompleted').is(':checked') || false,
+                deadline: $('#taskDeadline').val(),
+                priority: $('#taskPriority').val(),
+                categoryId: $('#taskCategoryId').val() || null,
+                tagsId: $('#taskTags').val() || []
+            };
+            if (!taskData.title) {
+                showNotification('El título es requerido', 'danger');
+                return;
+            }
+            // crear -editar
+            const taskId = $('#taskId').val();
+            const method = taskId ? 'PUT' : 'POST';
+            const url = taskId ? `/api/user/task/${taskId}` : '/api/user/task';
+
+            $.ajax({
+                url: url,
+                method: method,
+                contentType: 'application/json',
+                data: JSON.stringify(taskData),
+                success: function () {
+                    $('#taskModal').modal('hide');
+                    if (typeof loadTasks === 'function') {
+                        loadTasks();
+                    }
+                    showNotification(taskId ? 'Tarea actualizada correctamente' : 'Tarea creada correctamente', 'success');
+                },
+                error: function (xhr) {
+                    const message = xhr.responseJSON?.message || 'Error al guardar la tarea';
+                    showNotification(message, 'danger');
+                }
+            });
+        }
+        /* Editar tarea */
+        function editTask(id) {
+            $.ajax({
+                url: `/api/user/task/${id}`,
+                method: 'GET',
+                success: function (task) {
+                    $('#modalTitle').text('Editar Tarea');
+                    $('#taskId').val(task.id);
+                    $('#taskTitle').val(task.title);
+                    $('#taskDescription').val(task.description || '');
+                    $('#taskPriority').val(task.priority);
+                    $('#taskCategoryId').val(task.category?.id || '');
+
+                    if (task.deadline) {
+                        const deadline = new Date(task.deadline);
+                        const formattedDate = deadline.toISOString().slice(0, 16);
+                        $('#taskDeadline').val(formattedDate);
+                    } else {
+                        $('#taskDeadline').val('');
+                    }
+
+                    const tagIds = task.tags ? task.tags.map(t => t.id) : [];
+                    $('#taskTags').val(tagIds);
+
+                    $('#completedDiv').show();
+                    $('#taskCompleted').prop('checked', task.completed);
+
+                    $('#taskModal').modal('show');
+                },
+                error: function (xhr) {
+                    showNotification('Error al cargar la tarea', 'danger');
+                }
+            });
+        }
+        /*  limpiar formulario */
+        function resetTaskForm() {
+            $('#modalTitle').text('Nueva Tarea');
+            $('#taskId').val('');
+            $('#taskTitle').val('');
+            $('#taskDescription').val('');
+            $('#taskPriority').val('MEDIA');
+            $('#taskCategoryId').val('');
+            $('#taskDeadline').val('');
+            $('#taskTags').val([]);
+            $('#completedDiv').hide();
+            $('#taskCompleted').prop('checked', false);
+            $('#taskForm')[0].reset();
+        }
+        /* Mostrar notificacion */
+        function showNotification(message, type) {
+            const alert = $(`
+            <div class="alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3" style="z-index: 9999; min-width: 300px;">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `);
+            $('body').append(alert);
+            setTimeout(() => alert.fadeOut(() => alert.remove()), 3000);
+        }
+    </script>
+</body>
+
+</html>

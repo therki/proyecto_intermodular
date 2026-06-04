@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.openwebinars</groupId>
-	<artifactId>todo-rest</artifactId>
+	<artifactId>proyecto_intermodular_todo-rest</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name/>
 	<description/>
@@ -32,6 +32,12 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 	<dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
@@ -71,7 +77,14 @@
 			<artifactId>spring-boot-starter-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		-->
+		--><dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-thymeleaf</artifactId>
+    </dependency>
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity6</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

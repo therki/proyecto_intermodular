@@ -1,0 +1,49 @@
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+    background: linear-gradient(135deg, #4c4874 0%, #805873 50%, #deaeaa 100%);
+
+}
+.login-wrapper .card {
+  border-radius: 20px;
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  max-width: 400px;
+}
+.login-wrapper .card-header {
+  background-color: var(--color-logo-primary);
+  color: white;
+  text-align: center;
+  border-radius: 20px 20px 0 0;
+  padding: 2rem 1.5rem 1.5rem;
+}
+.login-wrapper .card-header img {
+  max-height: 64px;
+  margin-bottom: 0.75rem;
+}
+.login-wrapper .card-body {
+  padding: 1.5rem;
+}
+@media (max-width: 576px) {
+  .login-wrapper {
+    padding: 0.75rem;
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+  .login-wrapper .card-header {
+    padding: 1.5rem 1rem 1rem;
+  }
+  .login-wrapper .card-header img {
+    max-height: 52px;
+    margin-bottom: 0.5rem;
+  }
+  .login-wrapper .card-header h4 {
+    font-size: 1.1rem;
+  }
+  .login-wrapper .card-body {
+    padding: 1.25rem;
+  }
+}
