@@ -108,7 +108,7 @@ public class AdminController {
             @Parameter(description = "ID del usuario", required = true)
             @PathVariable Long id,
             @Parameter(description = "Datos actualizados del usuario", required = true)
-            @RequestBody NewUserCommand cmd) {
+            @org.springframework.web.bind.annotation.RequestBody NewUserCommand cmd) {
 
         User user = userService.updateUser(id, cmd);
         return ResponseEntity.ok(NewUserResponse.of(user));
@@ -169,7 +169,7 @@ public class AdminController {
             @Parameter(description = "ID de la categoría a editar", required = true)
             @PathVariable Long id,
             @Parameter(description = "Datos modificados de la categoria", required = true)
-            @RequestBody Category  category,
+            @org.springframework.web.bind.annotation.RequestBody Category  category,
             @AuthenticationPrincipal User user) {
         return ResponseEntity.ok(categoryService.edit(id, category, user));
     }
