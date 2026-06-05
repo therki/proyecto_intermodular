@@ -48,6 +48,7 @@ public class SecurityConfig {
                                 "/h2-console/**",
                                 "/favicon.ico",
                                 "/login",
+                                "/register",
                                 "/css/**",
                                 "/js/**",
                                 "/imgs/**"

@@ -4,8 +4,7 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
-    background: linear-gradient(135deg, #4c4874 0%, #805873 50%, #deaeaa 100%);
-
+  background: linear-gradient(135deg, #4c4874 0%, #805873 50%, #deaeaa 100%);
 }
 .login-wrapper .card {
   border-radius: 20px;
@@ -46,4 +45,63 @@
   .login-wrapper .card-body {
     padding: 1.25rem;
   }
+}
+/* Registro */
+.register-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    var(--color-logo-primary) 0%,
+    var(--color-primary) 100%
+  );
+  padding: 2rem 1rem;
+}
+
+.register-card {
+  max-width: 500px;
+  width: 100%;
+  border: none;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.register-card .card-header {
+  background: white;
+  border-bottom: none;
+  text-align: center;
+  padding: 2rem 1rem 1rem;
+}
+
+.register-card .card-header img {
+  max-width: 80px;
+  margin-bottom: 1rem;
+}
+
+.register-card .card-header h4 {
+  color: var(--color-logo-primary);
+}
+
+.register-card .card-body {
+  padding: 1.5rem 2rem;
+}
+
+.input-error {
+  border-color: #dc3545 !important;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+.btn-login {
+  background-color: var(--color-logo-primary);
+  color: white;
+}
+.btn-register{
+  border-color: var(--color-logo-primary);
+  color: var(--color-logo-primary);
 }

@@ -146,7 +146,6 @@
                 },
                 // Si da error marcar todas como 0
                 error: function (xhr) {
-                    console.error('Error al cargar tareas:', xhr);
                     $('#totalTasks').text('0');
                     $('#completedTasks').text('0');
                     $('#pendingTasks').text('0');
