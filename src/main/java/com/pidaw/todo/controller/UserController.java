@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -71,7 +72,7 @@ public class UserController {
                             )
                     )
             )
-            @RequestBody EditTaskDto dto,
+            @Valid  @RequestBody EditTaskDto dto,
             @Parameter(hidden = true)
             @AuthenticationPrincipal User user) {
         return ResponseEntity.status(HttpStatus.CREATED).body(taskService.save(dto, user));
@@ -84,7 +85,7 @@ public class UserController {
             @Parameter(description = "ID de la tarea a editar", required = true)
             @PathVariable Long id,
             @Parameter(description = "Datos actualizados de la tarea", required = true)
-            @RequestBody EditTaskDto dto) {
+            @Valid @RequestBody EditTaskDto dto) {
         return taskService.edit(dto, id);
     }
 
@@ -198,7 +199,7 @@ public class UserController {
                             )
                     )
             )
-            @RequestBody com.pidaw.todo.model.Tag tag,
+            @Valid @RequestBody com.pidaw.todo.model.Tag tag,
             @Parameter(hidden = true)
             @AuthenticationPrincipal User user) {
         return ResponseEntity.status(HttpStatus.CREATED).body(tagService.save(tag, user));
@@ -210,7 +211,7 @@ public class UserController {
             @Parameter(description = "ID de la etiqueta", required = true)
             @PathVariable Long id,
             @Parameter(description = "Datos actualizados de la etiqueta", required = true)
-            @RequestBody com.pidaw.todo.model.Tag tag,
+            @Valid @RequestBody com.pidaw.todo.model.Tag tag,
             @Parameter(hidden = true)
             @AuthenticationPrincipal User user) {
         return tagService.edit(id, tag, user);

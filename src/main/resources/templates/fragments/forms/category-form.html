@@ -12,9 +12,12 @@
                 <div class="modal-body">
                     <form id="categoryForm">
                         <input type="hidden" id="categoryId" />
+                        <input type="hidden" id="categoryUserId" />
                         <div class="mb-3">
-                            <label for="categoryTitle" class="form-label">Titulo</label>
-                            <input type="text" class="form-control" id="categoryTitle" placeholder="Titulo" required />
+                            <label for="categoryTitle" class="form-label">Titulo *</label>
+                            <input type="text" class="form-control" id="categoryTitle"
+                                placeholder="Ej: Trabajo, Personal, Estudios" required />
+                            <div class="invalid-feedback">El título es requerido</div>
                         </div>
                     </form>
                 </div>

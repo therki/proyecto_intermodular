@@ -2,6 +2,9 @@ package com.pidaw.todo.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,13 +32,23 @@ public class User implements UserDetails {
     private Long id;
 
     @Column(unique = true)
+
+    @NotBlank(message = "El nombre de usuario es obligatorio")
     private String username;
+
+    @NotBlank(message = "El nombre completo es obligatorio")
     private String fullname;
+
+    @NotBlank(message = "El email es obligatorio")
+    @Email(message = "El email debe ser válido")
     private String email;
+
+    @NotBlank(message = "La contraseña es obligatoria")
     private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(name="role")
+    @NotNull(message = "El rol es obligatorio")
     private RoleType role;
 
     @Override
