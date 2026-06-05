@@ -14,6 +14,11 @@ public class ViewController {
         return "login";
     }
 
+    @GetMapping("/register")
+    public String registerPage() {
+        return "register";
+    }
+
     @GetMapping("/")
     public String home(@AuthenticationPrincipal User user, Model model) {
         if (user == null) {
