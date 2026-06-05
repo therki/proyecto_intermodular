@@ -1,11 +1,10 @@
 package com.pidaw.todo.controller;
 
-import com.pidaw.todo.users.User;
+import com.pidaw.todo.model.User;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class ViewController {

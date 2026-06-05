@@ -2,7 +2,6 @@ package com.pidaw.todo.dto;
 
 import com.pidaw.todo.model.Task;
 import com.pidaw.todo.model.Task.Priority;
-import com.pidaw.todo.users.NewUserResponse;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

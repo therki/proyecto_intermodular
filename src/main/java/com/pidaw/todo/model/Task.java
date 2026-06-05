@@ -1,6 +1,5 @@
 package com.pidaw.todo.model;
 
-import com.pidaw.todo.users.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;

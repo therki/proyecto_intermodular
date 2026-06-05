@@ -6,7 +6,6 @@ import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
-import com.pidaw.todo.users.User;
 
 @Getter
 @Setter

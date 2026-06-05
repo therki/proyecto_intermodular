@@ -1,7 +1,7 @@
 package com.pidaw.todo.repos;
 
 import com.pidaw.todo.model.Tag;
-import com.pidaw.todo.users.User;
+import com.pidaw.todo.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
