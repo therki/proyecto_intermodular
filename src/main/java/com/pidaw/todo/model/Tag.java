@@ -2,6 +2,8 @@ package com.pidaw.todo.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -21,10 +23,12 @@ public class Tag {
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
+    @NotBlank(message = "El nombre de la etiqueta es obligatorio")
     private String name;
 
     @ManyToOne
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_tag_user"))
+    @NotNull(message = "La etiqueta debe pertenecer a un usuario")
     private User user;
 
     @Override

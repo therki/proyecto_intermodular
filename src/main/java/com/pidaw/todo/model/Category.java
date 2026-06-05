@@ -2,6 +2,8 @@ package com.pidaw.todo.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 import java.util.Objects;
@@ -20,10 +22,12 @@ public class Category {
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
+    @NotBlank(message = "El título de la categoría es obligatorio")
     private String title;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @NotNull(message = "La categoría debe pertenecer a un usuario")
     private User user;
 
 

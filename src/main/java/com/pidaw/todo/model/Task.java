@@ -2,6 +2,8 @@ package com.pidaw.todo.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -11,11 +13,11 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @ToString
 @Entity
 @Table(name="tasks")
@@ -25,17 +27,22 @@ public class Task {
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
+    @NotBlank(message = "El título de la tarea es obligatorio")
     private String title;
+
 
     private String description;
 
-    private boolean completed;
+    @NotNull(message = "El estado completado es obligatorio")
+    @Builder.Default
+    private boolean completed =false;
 
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
     private LocalDate deadline;
 
+    @NotNull(message = "La prioridad es obligatoria")
     public enum Priority { BAJA, MEDIA, ALTA }
     @Enumerated(EnumType.STRING)
     private Priority priority;
@@ -51,7 +58,7 @@ public class Task {
             inverseJoinColumns = @JoinColumn(name = "tag_id"),
             inverseForeignKey = @ForeignKey(name="fk_task_tag_tag")
     )
-    @Builder.Default
+
     @Setter(AccessLevel.NONE)
     private Set<Tag> tags = new HashSet<>();
 
