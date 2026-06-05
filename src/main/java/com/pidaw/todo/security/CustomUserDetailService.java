@@ -1,6 +1,6 @@
 package com.pidaw.todo.security;
 
-import com.pidaw.todo.users.UserRepository;
+import com.pidaw.todo.repos.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

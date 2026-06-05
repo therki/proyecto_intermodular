@@ -2,10 +2,10 @@ package com.pidaw.todo.controller;
 
 import com.pidaw.todo.model.Category;
 import com.pidaw.todo.service.CategoryService;
-import com.pidaw.todo.users.NewUserCommand;
-import com.pidaw.todo.users.NewUserResponse;
-import com.pidaw.todo.users.User;
-import com.pidaw.todo.users.UserService;
+import com.pidaw.todo.dto.NewUserCommand;
+import com.pidaw.todo.dto.NewUserResponse;
+import com.pidaw.todo.model.User;
+import com.pidaw.todo.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

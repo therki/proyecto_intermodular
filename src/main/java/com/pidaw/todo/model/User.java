@@ -1,4 +1,4 @@
-package com.pidaw.todo.users;
+package com.pidaw.todo.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;

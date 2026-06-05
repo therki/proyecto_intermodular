@@ -1,5 +1,9 @@
-package com.pidaw.todo.users;
+package com.pidaw.todo.service;
 
+import com.pidaw.todo.model.User;
+import com.pidaw.todo.dto.EditUserCommand;
+import com.pidaw.todo.dto.NewUserCommand;
+import com.pidaw.todo.repos.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

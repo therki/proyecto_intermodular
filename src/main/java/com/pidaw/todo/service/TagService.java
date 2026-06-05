@@ -4,7 +4,7 @@ import com.pidaw.todo.model.Tag;
 import com.pidaw.todo.model.Task;
 import com.pidaw.todo.repos.TagRepository;
 import com.pidaw.todo.repos.TaskRepository;
-import com.pidaw.todo.users.User;
+import com.pidaw.todo.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
