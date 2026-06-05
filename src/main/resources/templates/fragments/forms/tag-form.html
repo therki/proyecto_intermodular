@@ -21,7 +21,6 @@
                             <input type="text" class="form-control" id="tagName" required
                                 placeholder="Ej: urgente, trabajo, personal">
                             <div class="invalid-feedback">El nombre de la etiqueta es requerido</div>
-                            <small class="text-muted">Maximo 50 caracteres, sin espacios especiales</small>
                         </div>
                     </form>
                 </div>
@@ -36,26 +35,33 @@
     <script th:fragment="tagModalScripts">
         /* Guardar etiqueta */
         function saveTag() {
+            // Extraer valores
+            const tagId = $('#tagId').val();
             const tagName = $('#tagName').val().trim();
 
-            // Validaciones
-            if (!tagName || tagName.trim()==='') {
-                $('#tagName').addClass('is-invalid');
-                showNotification('El nombre de la etiqueta es requerido', 'danger');
-                return;
-            }
+            // Limpiar errores previos
             $('#tagName').removeClass('is-invalid');
 
-            if (tagName.length > 50) {
-                showNotification('El nombre de la etiqueta no puede exceder los 50 caracteres', 'danger');
+            let errors = [];
+
+            // Validar nombre
+            if (!tagName) {
+                errors.push('El nombre de la etiqueta es obligatorio');
+                $('#tagName').addClass('is-invalid');
+            } else if (tagName.length < 2) {
+                errors.push('El nombre debe tener al menos 2 caracteres');
+                $('#tagName').addClass('is-invalid');
+            } else if (tagName.length > 30) {
+                errors.push('El nombre no puede exceder los 30 caracteres');
+                $('#tagName').addClass('is-invalid');
+            }
+
+            // Si hay errores, detener (sin notificación)
+            if (errors.length > 0) {
                 return;
             }
 
-            const tagData = {
-                name: tagName
-            };
-
-            const tagId = $('#tagId').val();
+            const tagData = { name: tagName };
             const method = tagId ? 'PUT' : 'POST';
             const url = tagId ? `/api/user/tag/${tagId}` : '/api/user/tag';
 
@@ -73,26 +79,26 @@
                 },
                 error: function (xhr) {
                     let message = 'Error al guardar la etiqueta';
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                    if (xhr.responseJSON && xhr.responseJSON.detail) {
+                        message = xhr.responseJSON.detail;
+                    } else if (xhr.responseJSON && xhr.responseJSON.message) {
                         message = xhr.responseJSON.message;
                     }
                     showNotification(message, 'danger');
                 }
             });
-        }
-        /* Editar etiqueta */
+        }/* Editar etiqueta */
         function editTag(id, name) {
             $('#modalTagTitle').text('Editar Etiqueta');
             $('#tagId').val(id);
-            $('#tagName').val(name);
+            $('#tagName').val(name).removeClass('is-invalid');
             $('#tagModal').modal('show');
         }
         /* Limpiar formulario */
         function resetTagForm() {
             $('#modalTagTitle').text('Nueva Etiqueta');
             $('#tagId').val('');
-            $('#tagName').val('');
-            $('#tagName').removeClass('is-invalid');
+            $('#tagName').val('').removeClass('is-invalid');
             $('#tagForm')[0].reset();
         }
         /* Eliminar tag */

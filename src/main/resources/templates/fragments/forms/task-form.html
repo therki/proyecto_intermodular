@@ -91,21 +91,6 @@
 
 
         /* Listar todas las categorias  - Para el selector*/
-        function loadCategoriesForModal() {
-            $.ajax({
-                url: '/api/user/categories',
-                method: 'GET',
-                success: function (categories) {
-                    allCategories = categories;
-                    let options = '<option value="">Sin categoría</option>';
-                    categories.forEach(cat => {
-                        options += `<option value="${cat.id}">${cat.title}</option>`;
-                    });
-                    $('#taskCategoryId').html(options);
-                }
-            });
-        }
-        /* Cargar listado de etiquetas */
         function loadTagsForModal() {
             $.ajax({
                 url: '/api/user/tags',
@@ -122,21 +107,66 @@
         }
         /* Guardar tarea */
         function saveTask() {
+            // Extraer valores
+            const taskId = $('#taskId').val();
+            const title = $('#taskTitle').val().trim();
+            const description = $('#taskDescription').val().trim();
+            const priority = $('#taskPriority').val();
+            const deadline = $('#taskDeadline').val();
+
+            // Limpiar errores previos
+            $('#taskTitle, #taskDescription, #taskPriority, #taskDeadline').removeClass('is-invalid');
+
+            let errors = [];
+
+            // Validar título
+            if (!title) {
+                errors.push('El título es obligatorio');
+                $('#taskTitle').addClass('is-invalid');
+            } else if (title.length < 3) {
+                errors.push('El título debe tener al menos 3 caracteres');
+                $('#taskTitle').addClass('is-invalid');
+            }
+
+            // Validar descripción (opcional pero con límite)
+            if (description && description.length > 500) {
+                errors.push('La descripción no puede exceder los 500 caracteres');
+                $('#taskDescription').addClass('is-invalid');
+            }
+
+            // Validar prioridad
+            if (!priority || priority === '') {
+                errors.push('La prioridad es obligatoria');
+                $('#taskPriority').addClass('is-invalid');
+            }
+
+            // Validar fecha límite (si se proporciona)
+            if (deadline) {
+                const selectedDate = new Date(deadline);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                if (selectedDate < today) {
+                    errors.push('La fecha límite debe ser hoy o una fecha futura');
+                    $('#taskDeadline').addClass('is-invalid');
+                }
+            }
+
+            // Si hay errores, detener (sin notificación)
+            if (errors.length > 0) {
+                return;
+            }
+
+            // Construir objeto de datos
             const taskData = {
-                title: $('#taskTitle').val(),
-                description: $('#taskDescription').val(),
+                title: title,
+                description: description || '',
                 completed: $('#taskCompleted').is(':checked') || false,
-                deadline: $('#taskDeadline').val(),
-                priority: $('#taskPriority').val(),
+                deadline: deadline || null,
+                priority: priority,
                 categoryId: $('#taskCategoryId').val() || null,
                 tagsId: $('#taskTags').val() || []
             };
-            if (!taskData.title) {
-                showNotification('El título es requerido', 'danger');
-                return;
-            }
-            // crear -editar
-            const taskId = $('#taskId').val();
+
             const method = taskId ? 'PUT' : 'POST';
             const url = taskId ? `/api/user/task/${taskId}` : '/api/user/task';
 
@@ -153,12 +183,16 @@
                     showNotification(taskId ? 'Tarea actualizada correctamente' : 'Tarea creada correctamente', 'success');
                 },
                 error: function (xhr) {
-                    const message = xhr.responseJSON?.message || 'Error al guardar la tarea';
+                    let message = 'Error al guardar';
+                    if (xhr.responseJSON && xhr.responseJSON.detail) {
+                        message = xhr.responseJSON.detail;
+                    } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                        message = xhr.responseJSON.message;
+                    }
                     showNotification(message, 'danger');
                 }
             });
-        }
-        /* Editar tarea */
+        }/* Editar tarea */
         function editTask(id) {
             $.ajax({
                 url: `/api/user/task/${id}`,
@@ -166,15 +200,15 @@
                 success: function (task) {
                     $('#modalTitle').text('Editar Tarea');
                     $('#taskId').val(task.id);
-                    $('#taskTitle').val(task.title);
-                    $('#taskDescription').val(task.description || '');
+                    $('#taskTitle').val(task.title).removeClass('is-invalid');
+                    $('#taskDescription').val(task.description || '').removeClass('is-invalid');
                     $('#taskPriority').val(task.priority);
                     $('#taskCategoryId').val(task.category?.id || '');
 
                     if (task.deadline) {
                         const deadline = new Date(task.deadline);
-                        const formattedDate = deadline.toISOString().slice(0, 16);
-                        $('#taskDeadline').val(formattedDate);
+                        const formattedDate = deadline.toISOString().slice(0, 10);
+                        $('#taskDeadline').val(formattedDate).removeClass('is-invalid');
                     } else {
                         $('#taskDeadline').val('');
                     }
@@ -191,16 +225,16 @@
                     showNotification('Error al cargar la tarea', 'danger');
                 }
             });
-        }
-        /*  limpiar formulario */
+        } /*  limpiar formulario */
+        
         function resetTaskForm() {
             $('#modalTitle').text('Nueva Tarea');
             $('#taskId').val('');
-            $('#taskTitle').val('');
-            $('#taskDescription').val('');
+            $('#taskTitle').val('').removeClass('is-invalid');
+            $('#taskDescription').val('').removeClass('is-invalid');
             $('#taskPriority').val('MEDIA');
             $('#taskCategoryId').val('');
-            $('#taskDeadline').val('');
+            $('#taskDeadline').val('').removeClass('is-invalid');
             $('#taskTags').val([]);
             $('#completedDiv').hide();
             $('#taskCompleted').prop('checked', false);

@@ -22,7 +22,8 @@
         <div class="bg-white rounded-3 p-4 mb-4 shadow-sm">
             <div class="page-header">
                 <div>
-                    <h2 class="mb-1"><i class="fas fa-tags me-2 "style="color: var(--color-primary)"></i>Categorias del Sistema</h2>
+                    <h2 class="mb-1"><i class="fas fa-tags me-2 " style="color: var(--color-primary)"></i>Categorias del
+                        Sistema</h2>
                     <p class="text-muted mb-0">Organiza las tareas en diferentes categorias</p>
                 </div>
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#categoryModal"
@@ -98,13 +99,25 @@
 
         /* Guardar categoria */
         function saveCategory() {
+            // Extraer valores
+            const categoryId = $("#categoryId").val();
+            const title = $("#categoryTitle").val().trim();
+
+            // Limpiar errores
+            $("#categoryTitle").removeClass('is-invalid');
+            let errors = [];
+
+            // Validar título
+            if (!title) {
+                errors.push('El título de la categoría es obligatorio');
+                $("#categoryTitle").addClass('is-invalid');
+            }
+            if (errors.length > 0) { return }
+
             const categoryData = {
-                title: $("#categoryTitle").val(),
+                title: title
             };
 
-            const categoryId = $("#categoryId").val();
-            const userId = $("#categoryUserId").val();
-            // Edicion - creacion
             const method = categoryId ? "PUT" : "POST";
             let url = categoryId ? `/api/admin/category/${categoryId}` : "/api/admin/category";
 
@@ -119,21 +132,29 @@
                     showNotification("Categoria guardada correctamente", "success");
                 },
                 error: function (xhr) {
-                    showNotification(xhr.responseJSON?.message || "Error al guardar", "danger");
-                },
+                    let message = "Error al guardar";
+                    if (xhr.responseJSON && xhr.responseJSON.detail) {
+                        message = xhr.responseJSON.detail;
+                    } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                        message = xhr.responseJSON.message;
+                    }
+                    showNotification(message, "danger");
+                }
             });
         }
+
         /* ABrirl modal edicion */
         function editCategory(id) {
+            //OBtener datos de la categoria
             const category = allCategories.find((c) => c.id === id);
-            // Obtener datos de la categoria selec
             if (category) {
                 $("#categoryId").val(category.id);
-                $("#categoryTitle").val(category.title);
+                $("#categoryTitle").val(category.title).removeClass('is-invalid');
                 $("#categoryUserId").val(category.user ? category.user.id : "");
                 $("#categoryModal").modal("show");
             }
         }
+
         /* Eliminar categoria - confirmar con alerta */
         function deleteCategory(id, title) {
             if (confirm(`¿Eliminar la categoria "${title}"?`)) {
@@ -153,7 +174,7 @@
         /* Limpiar fomr */
         function resetCategoryForm() {
             $("#categoryId").val("");
-            $("#categoryTitle").val("");
+            $("#categoryTitle").val("").removeClass('is-invalid');
             $("#categoryUserId").val("");
             $("#categoryForm")[0].reset();
         }
