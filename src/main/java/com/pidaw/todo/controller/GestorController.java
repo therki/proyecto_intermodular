@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -63,7 +64,7 @@ public class GestorController {
                            )
                    )
            )
-            @org.springframework.web.bind.annotation.RequestBody Category category,
+            @Valid  @org.springframework.web.bind.annotation.RequestBody Category category,
             @AuthenticationPrincipal User user) {
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.save(category,user));
     }
@@ -75,7 +76,7 @@ public class GestorController {
             @Parameter(description = "ID categoría a editar", required = true)
             @PathVariable Long id,
             @Parameter(description = "Datos de la categoría a editar", required = true)
-            @org.springframework.web.bind.annotation.RequestBody Category  category,
+            @Valid @org.springframework.web.bind.annotation.RequestBody Category  category,
             @AuthenticationPrincipal User user) {
         return ResponseEntity.ok(categoryService.edit(id, category,user));
     }

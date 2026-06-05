@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -93,7 +94,7 @@ public class AdminController {
                 )
                             )
                     )
-        @org.springframework.web.bind.annotation.RequestBody NewUserCommand cmd) {  // ✅ Añade esta anotación
+        @Valid @org.springframework.web.bind.annotation.RequestBody NewUserCommand cmd) {
         User user = userService.register(cmd);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -108,7 +109,7 @@ public class AdminController {
             @Parameter(description = "ID del usuario", required = true)
             @PathVariable Long id,
             @Parameter(description = "Datos actualizados del usuario", required = true)
-            @org.springframework.web.bind.annotation.RequestBody NewUserCommand cmd) {
+            @Valid @org.springframework.web.bind.annotation.RequestBody NewUserCommand cmd) {
 
         User user = userService.updateUser(id, cmd);
         return ResponseEntity.ok(NewUserResponse.of(user));
@@ -157,7 +158,8 @@ public class AdminController {
                                     value = "{ \"title\": \"Nueva Categoría\" }"
                             )
                     )
-            ) @org.springframework.web.bind.annotation.RequestBody Category category,
+            )
+            @Valid @org.springframework.web.bind.annotation.RequestBody Category category,
             @AuthenticationPrincipal User user) {
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.save(category,user));
     }
@@ -169,7 +171,7 @@ public class AdminController {
             @Parameter(description = "ID de la categoría a editar", required = true)
             @PathVariable Long id,
             @Parameter(description = "Datos modificados de la categoria", required = true)
-            @org.springframework.web.bind.annotation.RequestBody Category  category,
+            @Valid @org.springframework.web.bind.annotation.RequestBody Category  category,
             @AuthenticationPrincipal User user) {
         return ResponseEntity.ok(categoryService.edit(id, category, user));
     }
