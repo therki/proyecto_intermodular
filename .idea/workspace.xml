@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="53172687-d059-41f5-a961-48a0a79f30f3" name="Changes" comment="cambio nombre package">
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/application.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/TodoRestApplication.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/config/SpringdocConfig.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/config/WebConfig.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/controller/AdminController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/controller/GestorController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/controller/PublicController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/controller/UserController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/controller/ViewController$1.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/controller/ViewController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/dto/EditTaskDto.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/dto/EditUserCommand.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/dto/GetTaskDto.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/dto/NewUserCommand.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/dto/NewUserResponse.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/error/CustomAccessDeniedHandler.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/error/CustomAuthenticationEntryPoint.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/error/GlobalErrorController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/error/TaskNotFoundException.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/model/Category$CategoryBuilder.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/model/Category.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/model/Tag$TagBuilder.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/model/Tag.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/model/Task$Priority.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/model/Task$TaskBuilder.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/model/Task.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/model/User$RoleType.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/model/User$UserBuilder.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/model/User.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/repos/CategoryRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/repos/TagRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/repos/TaskRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/repos/UserRepository.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/security/CustomUserDetailService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/security/PasswordEncoderConfig.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/security/SecurityConfig.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/service/CategoryService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/service/TagService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/service/TaskService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/com/pidaw/todo/service/UserService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/import.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/static/css/forms.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/static/css/login.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/static/css/main.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/static/css/tablas.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/static/css/tasks.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/static/imgs/logo_todo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/templates/admin/categories-list.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/templates/admin/dashboard.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/templates/admin/users-list.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/templates/fragments/forms/category-form.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/templates/fragments/forms/profile-form.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/templates/fragments/forms/tag-form.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/templates/fragments/forms/task-form.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/templates/fragments/forms/user-form.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/templates/fragments/navbar.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/templates/gestor/categories-list.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/templates/gestor/dashboard.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/templates/login.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/templates/register.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/templates/user/dashboard.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/templates/user/tags.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/classes/templates/user/tasks.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proyecto_todo/target/test-classes/com/pidaw/todo/TodoRestApplicationTests.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env.example" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/proyecto_todo/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pidaw/todo/dto/EditTaskDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pidaw/todo/dto/EditTaskDto.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="frontend" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;therki&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/therki/proyecto_intermodular.git&quot;,
+    &quot;accountId&quot;: &quot;31197889-942d-470d-b647-b1e3b6a51294&quot;
+  }
+}</component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="3DoldB76MHWszoIeKkDKtZtkvK2" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.TodoRestApplication.executor": "Run",
+    "Maven.proyecto_intermodular_todo-rest [org.apache.maven.plugins:maven-clean-plugin:3.3.2:clean].executor": "Run",
+    "Maven.proyecto_intermodular_todo-rest [org.springframework.boot:spring-boot-maven-plugin:3.2.5:run].executor": "Run",
+    "Maven.todo-rest [org.apache.maven.plugins:maven-clean-plugin:3.3.2:clean].executor": "Run",
+    "Maven.todo-rest [org.springframework.boot:spring-boot-maven-plugin:3.2.5:run].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "revision__validaciones",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/esthe/OneDrive/Documentos/DAW/Proyecto_Intermodular_TODO/proyecto_todo/src/main/resources/templates/fragments",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\esthe\OneDrive\Documentos\DAW\Proyecto_Intermodular_TODO\proyecto_todo\src\main\resources\templates\fragments" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\esthe\OneDrive\Documentos\DAW\Proyecto_Intermodular_TODO\proyecto_todo\proyecto_todo" />
+      <recent name="C:\Users\esthe\OneDrive\Documentos\DAW\Proyecto_Intermodular_TODO\proyecto_todo\src\main\resources\templates\fragments\forms" />
+      <recent name="C:\Users\esthe\OneDrive\Documentos\DAW\Proyecto_Intermodular_TODO\proyecto_todo\src\main\resources\static\imgs" />
+      <recent name="C:\Users\esthe\OneDrive\Documentos\DAW\Proyecto_Intermodular_TODO\proyecto_todo\src\main\resources\static" />
+      <recent name="C:\Users\esthe\OneDrive\Documentos\DAW\Proyecto_Intermodular_TODO\proyecto_todo\src\main\resources\static\css" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="TodoRestApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.pidaw.todo.TodoRestApplication" />
+      <module name="proyecto_intermodular_todo-rest" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.pidaw.todo.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.TodoRestApplication" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="53172687-d059-41f5-a961-48a0a79f30f3" name="Changes" comment="" />
+      <created>1778956387699</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1778956387699</updated>
+    </task>
+    <task id="LOCAL-00001" summary="cambio nombre package">
+      <option name="closed" value="true" />
+      <created>1778956560030</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1778956560030</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="origin/frontend" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="cambio nombre package" />
+    <option name="LAST_COMMIT_MESSAGE" value="cambio nombre package" />
+  </component>
+</project>

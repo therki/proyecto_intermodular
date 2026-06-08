@@ -1,0 +1,200 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <link rel="icon" type="image/png" th:href="@{/imgs/logo_todo.png}" />
+    <title>TODO App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" th:href="@{/css/override.css}" />
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/tablas.css}" />
+    <link rel="stylesheet" th:href="@{/css/forms.css}" />
+</head>
+
+<body th:classappend="${user != null && user.role.name() == 'ADMIN'} ? 'role-admin' : 
+                      (${user != null && user.role.name() == 'GESTOR'} ? 'role-gestor' : 'role-usuario')">
+    <div th:replace="~{fragments/navbar :: navbar (title='Dashboard del Administrador', user=${user})}"></div>
+    <div class="container mt-4">
+        <!-- Header con fondo suave -->
+        <div class="bg-white rounded-3 p-4 mb-4 shadow-sm">
+            <div class="page-header">
+                <div>
+                    <h2 class="mb-1"><i class="fas fa-tags me-2 " style="color: var(--color-primary)"></i>Categorias del
+                        Sistema</h2>
+                    <p class="text-muted mb-0">Organiza las tareas en diferentes categorias</p>
+                </div>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#categoryModal"
+                    onclick="resetCategoryForm()">
+                    <i class="fas fa-plus-circle me-2"></i>Nueva Categoria
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabla con mejor estilo -->
+        <div class="bg-white rounded-3 shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead style="background-color: var(--color-logo-primary); color: white;">
+                        <tr>
+                            <th class="py-3">ID</th>
+                            <th class="py-3">Titulo</th>
+                            <th class="py-3">Creado por</th>
+                            <th class="py-3">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoriesTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div th:replace="fragments/forms/category-form :: categoryForm"></div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        /* Obtener categorias */
+        let allCategories = [];
+        function loadCategories() {
+            $.ajax({
+                url: "/api/admin/categories",
+                method: "GET",
+                success: function (categories) {
+                    allCategories = categories;
+                    displayCategories(categories);
+                },
+                error: function (xhr) {
+                    console.error("Error loading categories:", xhr);
+                    showNotification("Error al cargar categorias", "danger");
+                }
+            });
+        }
+        /* Crear fila por caada categoria */
+        function displayCategories(categories) {
+            let html = "";
+            categories.forEach((category) => {
+                const userName = category.user ? category.user.username : 'Sistema'; // Categoria por defecto - sistema
+                // Fila por cada categoria
+                html += `
+                <tr>
+                    <td class="py-3" data-label="ID">${category.id}</td>
+                    <td class="py-3" data-label="Titulo"><i class="fas fa-folder me-2 text-secondary"></i><strong>${category.title}</strong></td>
+                    <td class="py-3" data-label="Creado por"><i class="fas fa-user me-2 text-muted"></i>${userName}</td>
+                    <td class="py-3" data-label="Acciones">
+                        <div class="d-flex flex-wrap gap-1 justify-content-end justify-content-md-start">
+                        <button class="btn btn-sm btn-outline-warning" onclick="editCategory(${category.id})" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteCategory(${category.id}, '${category.title}')" title="Eliminar">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            });
+            $("#categoriesTableBody").html(html);
+        }
+
+        /* Guardar categoria */
+        function saveCategory() {
+            // Extraer valores
+            const categoryId = $("#categoryId").val();
+            const title = $("#categoryTitle").val().trim();
+
+            // Limpiar errores
+            $("#categoryTitle").removeClass('is-invalid');
+            let errors = [];
+
+            // Validar título
+            if (!title) {
+                errors.push('El título de la categoría es obligatorio');
+                $("#categoryTitle").addClass('is-invalid');
+            }
+            if (errors.length > 0) { return }
+
+            const categoryData = {
+                title: title
+            };
+
+            const method = categoryId ? "PUT" : "POST";
+            let url = categoryId ? `/api/admin/category/${categoryId}` : "/api/admin/category";
+
+            $.ajax({
+                url: url,
+                method: method,
+                contentType: "application/json",
+                data: JSON.stringify(categoryData),
+                success: function () {
+                    $("#categoryModal").modal("hide");
+                    loadCategories();
+                    showNotification("Categoria guardada correctamente", "success");
+                },
+                error: function (xhr) {
+                    let message = "Error al guardar";
+                    if (xhr.responseJSON && xhr.responseJSON.detail) {
+                        message = xhr.responseJSON.detail;
+                    } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                        message = xhr.responseJSON.message;
+                    }
+                    showNotification(message, "danger");
+                }
+            });
+        }
+
+        /* ABrirl modal edicion */
+        function editCategory(id) {
+            //OBtener datos de la categoria
+            const category = allCategories.find((c) => c.id === id);
+            if (category) {
+                $("#categoryId").val(category.id);
+                $("#categoryTitle").val(category.title).removeClass('is-invalid');
+                $("#categoryUserId").val(category.user ? category.user.id : "");
+                $("#categoryModal").modal("show");
+            }
+        }
+
+        /* Eliminar categoria - confirmar con alerta */
+        function deleteCategory(id, title) {
+            if (confirm(`¿Eliminar la categoria "${title}"?`)) {
+                $.ajax({
+                    url: `/api/admin/category/${id}`,
+                    method: "DELETE",
+                    success: function () {
+                        loadCategories();
+                        showNotification("Categoria eliminada", "success");
+                    },
+                    error: function (xhr) {
+                        showNotification(xhr.responseJSON?.message || "Error al eliminar", "danger");
+                    }
+                });
+            }
+        }
+        /* Limpiar fomr */
+        function resetCategoryForm() {
+            $("#categoryId").val("");
+            $("#categoryTitle").val("").removeClass('is-invalid');
+            $("#categoryUserId").val("");
+            $("#categoryForm")[0].reset();
+        }
+
+        /* Mostrar alerta */
+        function showNotification(message, type) {
+            const alert = $(`
+             <div class="alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3" style="z-index: 9999;">
+                 ${message}
+                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+             </div>
+         `);
+            $("body").append(alert);
+            setTimeout(() => alert.alert('close'), 3000);
+        }
+        /* Cargar categorias al iniciar */
+        $(document).ready(function () {
+            loadCategories();
+        });
+    </script>
+</body>
+
+</html>
