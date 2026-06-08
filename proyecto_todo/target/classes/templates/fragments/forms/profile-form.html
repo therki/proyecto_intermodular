@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <!-- Modal Perfil de Usuario -->
+    <div class="modal fade" id="profileModal" tabindex="-1" th:fragment="profileModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-user-edit me-2"></i>
+                        <span>Editar Perfil</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="profileForm">
+                        <!-- Username-->
+                        <div class="mb-3">
+                            <label for="profileUsername" class="form-label">
+                                <i class="fas fa-user me-2"></i>Nombre de Usuario
+                            </label>
+                            <input type="text" class="form-control" id="profileUsername" required>
+                            <div class="invalid-feedback">El nombre de usuario es requerido</div>
+                        </div>
+                        <!-- Nombre completo-->
+                        <div class="mb-3">
+                            <label for="profileFullname" class="form-label">
+                                <i class="fas fa-id-card me-2"></i>Nombre Completo
+                            </label>
+                            <input type="text" class="form-control" id="profileFullname">
+                        </div>
+                        <!-- Email-->
+                        <div class="mb-3">
+                            <label for="profileEmail" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>Correo Electrónico
+                            </label>
+                            <input type="email" class="form-control" id="profileEmail" required>
+                            <div class="invalid-feedback">Ingrese un email válido</div>
+                        </div>
+                        <!-- Contraseña-->
+                        <div class="mb-3">
+                            <label for="profilePassword" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Nueva Contraseña
+                            </label>
+                            <input type="password" class="form-control" id="profilePassword">
+                            <small class="text-muted">Dejar en blanco para mantener la contraseña actual</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="profileConfirmPassword" class="form-label">
+                                <i class="fas fa-check-circle me-2"></i>Confirmar Contraseña
+                            </label>
+                            <input type="password" class="form-control" id="profileConfirmPassword">
+                            <small class="text-muted" id="passwordMatchMsg"></small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveProfile()">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:fragment="profileModalScripts">
+        let currentUser = null;
+        /* Obtener datos del usuario actual */
+        function loadProfileData() {
+            $.ajax({
+                url: '/api/user/profile',
+                method: 'GET',
+                success: function (user) {
+                    currentUser = user;
+                    $('#profileUsername').val(user.username);
+                    $('#profileFullname').val(user.fullname || '');
+                    $('#profileEmail').val(user.email);
+                },
+                error: function (xhr) {
+                    showProfileNotification('Error al cargar los datos del perfil', 'danger');
+                }
+            });
+        }
+        /* Guardar */
+        function saveProfile() {
+            let isValid = true;
+            // VAlidar
+            if (!$('#profileUsername').val()) {
+                $('#profileUsername').addClass('is-invalid');
+                isValid = false;
+            } else {
+                $('#profileUsername').removeClass('is-invalid');
+            }
+
+            if (!$('#profileEmail').val()) {
+                $('#profileEmail').addClass('is-invalid');
+                isValid = false;
+            } else {
+                $('#profileEmail').removeClass('is-invalid');
+            }
+
+            const password = $('#profilePassword').val();
+            const confirmPassword = $('#profileConfirmPassword').val();
+
+            if (password !== confirmPassword) {
+                $('#profileConfirmPassword').addClass('is-invalid');
+                $('#passwordMatchMsg').text('Las contraseñas no coinciden').css('color', 'red');
+                isValid = false;
+            } else {
+                $('#profileConfirmPassword').removeClass('is-invalid');
+                $('#passwordMatchMsg').text('');
+            }
+
+            if (password && password.length < 4) {
+                showProfileNotification('La contraseña debe tener al menos 4 caracteres', 'danger');
+                return;
+            }
+
+            if (!isValid) return;
+
+            const userData = {
+                username: $('#profileUsername').val(),
+                fullname: $('#profileFullname').val(),
+                email: $('#profileEmail').val(),
+                password: password || null
+            };
+
+            $.ajax({
+                url: '/api/user/edit-profile',
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(userData),
+                success: function () {
+                    $('#profileModal').modal('hide');
+                    showProfileNotification('Perfil actualizado correctamente', 'success');
+                    // Recargar la página para actualizar el navbar
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                },
+                error: function (xhr) {
+                    let message = 'Error al actualizar el perfil';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        message = xhr.responseJSON.message;
+                    }
+                    showProfileNotification(message, 'danger');
+                }
+            });
+        }
+        /* Limpiar form */
+        function resetProfileForm() {
+            $('#profileForm')[0].reset();
+            $('#profileUsername').removeClass('is-invalid');
+            $('#profileEmail').removeClass('is-invalid');
+            $('#profileConfirmPassword').removeClass('is-invalid');
+            $('#passwordMatchMsg').text('');
+        }
+        /* Mostrar notificaion */
+        function showProfileNotification(message, type) {
+            const alert = $(`
+                <div class="alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3" style="z-index: 9999; min-width: 300px;">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `);
+            $('body').append(alert);
+            setTimeout(() => alert.fadeOut(() => alert.remove()), 3000);
+        }
+
+        // Verificar contraseñas en tiempo read
+        $('#profileConfirmPassword').on('keyup', function () {
+            const password = $('#profilePassword').val();
+            const confirm = $(this).val();
+            if (password !== confirm) {
+                $(this).addClass('is-invalid');
+                $('#passwordMatchMsg').text('Las contraseñas no coinciden').css('color', 'red');
+            } else {
+                $(this).removeClass('is-invalid');
+                $('#passwordMatchMsg').text('Las contraseñas coinciden').css('color', 'green');
+            }
+        });
+
+        $('#profilePassword').on('keyup', function () {
+            const confirm = $('#profileConfirmPassword').val();
+            if (confirm && $(this).val() !== confirm) {
+                $('#profileConfirmPassword').addClass('is-invalid');
+                $('#passwordMatchMsg').text('Las contraseñas no coinciden').css('color', 'red');
+            } else if (confirm) {
+                $('#profileConfirmPassword').removeClass('is-invalid');
+                $('#passwordMatchMsg').text('Las contraseñas coinciden').css('color', 'green');
+            }
+        });
+    </script>
+</body>
+
+</html>

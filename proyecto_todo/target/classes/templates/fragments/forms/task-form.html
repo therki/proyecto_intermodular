@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <!-- Modal Tarea -->
+    <div class="modal fade" id="taskModal" tabindex="-1" th:fragment="taskModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-tasks me-2"></i>
+                        <span id="modalTitle">Nueva Tarea</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formulario -->
+                    <form id="taskForm" th:fragment="taskForm">
+                        <!-- Titulo -->
+                        <input type="hidden" id="taskId">
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">Titulo *</label>
+                            <input type="text" class="form-control" id="taskTitle" required
+                                placeholder="Ej: Revisar informe mensual">
+                            <div class="invalid-feedback">El titulo es requerido</div>
+                        </div>
+                        <!-- Descripcion-->
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">Descripcion</label>
+                            <textarea class="form-control" id="taskDescription" rows="3"
+                                placeholder="Describe los detalles de la tarea..."></textarea>
+                            <small class="text-muted">Opcional - Agrega informacion adicional sobre la tarea</small>
+                        </div>
+                        <div class="row">
+                            <!-- Selector de prioridad-->
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-medium">Prioridad</label>
+                                <select class="form-select" id="taskPriority">
+                                    <option value="BAJA">Baja</option>
+                                    <option value="MEDIA" selected>Media</option>
+                                    <option value="ALTA">Alta</option>
+                                </select>
+                                <small class="text-muted">Define la prioridad de la tarea</small>
+                            </div>
+                            <!-- Fecha limite-->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-medium">Fecha Limite</label>
+                                <input type="date" class="form-control" id="taskDeadline">
+                                <small class="text-muted">Opcional - Cuando debe completarse</small>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Categoria -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-medium">Categoria</label>
+                                <select class="form-select" id="taskCategoryId">
+                                    <option value="">Sin categoria</option>
+                                </select>
+                                <small class="text-muted">Agrupa la tarea en una categoria existente</small>
+                            </div>
+                            <!-- Etiquetas-->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-medium">Etiquetas</label>
+                                <select class="form-select" id="taskTags" multiple
+                                    placeholder="Selecciona etiquetas...">
+                                </select>
+                                <small class="text-muted">Haz clic para desplegar y seleccionar varias</small>
+                            </div>
+                            <!-- Check completado -->
+                            <div id="completedDiv" class="mb-3 form-check" style="display: none;">
+                                <input type="checkbox" class="form-check-input" id="taskCompleted">
+                                <label class="form-check-label" for="taskCompleted">Tarea completada</label>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveTask()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:fragment="taskModalScripts">
+        let allCategories = [];
+        let allTags = [];
+
+
+        /* Listar todas las categorias  - Para el selector*/
+        function loadTagsForModal() {
+            $.ajax({
+                url: '/api/user/tags',
+                method: 'GET',
+                success: function (tags) {
+                    allTags = tags;
+                    let options = '';
+                    tags.forEach(tag => {
+                        options += `<option value="${tag.id}">${tag.name}</option>`;
+                    });
+                    $('#taskTags').html(options);
+                }
+            });
+        }
+        /* Guardar tarea */
+        function saveTask() {
+            // Extraer valores
+            const taskId = $('#taskId').val();
+            const title = $('#taskTitle').val().trim();
+            const description = $('#taskDescription').val().trim();
+            const priority = $('#taskPriority').val();
+            const deadline = $('#taskDeadline').val();
+
+            // Limpiar errores previos
+            $('#taskTitle, #taskDescription, #taskPriority, #taskDeadline').removeClass('is-invalid');
+
+            let errors = [];
+
+            // Validar título
+            if (!title) {
+                errors.push('El título es obligatorio');
+                $('#taskTitle').addClass('is-invalid');
+            } else if (title.length < 3) {
+                errors.push('El título debe tener al menos 3 caracteres');
+                $('#taskTitle').addClass('is-invalid');
+            }
+
+            // Validar descripción (opcional pero con límite)
+            if (description && description.length > 500) {
+                errors.push('La descripción no puede exceder los 500 caracteres');
+                $('#taskDescription').addClass('is-invalid');
+            }
+
+            // Validar prioridad
+            if (!priority || priority === '') {
+                errors.push('La prioridad es obligatoria');
+                $('#taskPriority').addClass('is-invalid');
+            }
+
+            // Validar fecha límite (si se proporciona)
+            if (deadline) {
+                const selectedDate = new Date(deadline);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                if (selectedDate < today) {
+                    errors.push('La fecha límite debe ser hoy o una fecha futura');
+                    $('#taskDeadline').addClass('is-invalid');
+                }
+            }
+
+            // Si hay errores, detener (sin notificación)
+            if (errors.length > 0) {
+                return;
+            }
+
+            // Construir objeto de datos
+            const taskData = {
+                title: title,
+                description: description || '',
+                completed: $('#taskCompleted').is(':checked') || false,
+                deadline: deadline || null,
+                priority: priority,
+                categoryId: $('#taskCategoryId').val() || null,
+                tagsId: $('#taskTags').val() || []
+            };
+
+            const method = taskId ? 'PUT' : 'POST';
+            const url = taskId ? `/api/user/task/${taskId}` : '/api/user/task';
+
+            $.ajax({
+                url: url,
+                method: method,
+                contentType: 'application/json',
+                data: JSON.stringify(taskData),
+                success: function () {
+                    $('#taskModal').modal('hide');
+                    if (typeof loadTasks === 'function') {
+                        loadTasks();
+                    }
+                    showNotification(taskId ? 'Tarea actualizada correctamente' : 'Tarea creada correctamente', 'success');
+                },
+                error: function (xhr) {
+                    let message = 'Error al guardar';
+                    if (xhr.responseJSON && xhr.responseJSON.detail) {
+                        message = xhr.responseJSON.detail;
+                    } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                        message = xhr.responseJSON.message;
+                    }
+                    showNotification(message, 'danger');
+                }
+            });
+        }/* Editar tarea */
+        function editTask(id) {
+            $.ajax({
+                url: `/api/user/task/${id}`,
+                method: 'GET',
+                success: function (task) {
+                    $('#modalTitle').text('Editar Tarea');
+                    $('#taskId').val(task.id);
+                    $('#taskTitle').val(task.title).removeClass('is-invalid');
+                    $('#taskDescription').val(task.description || '').removeClass('is-invalid');
+                    $('#taskPriority').val(task.priority);
+                    $('#taskCategoryId').val(task.category?.id || '');
+
+                    if (task.deadline) {
+                        const deadline = new Date(task.deadline);
+                        const formattedDate = deadline.toISOString().slice(0, 10);
+                        $('#taskDeadline').val(formattedDate).removeClass('is-invalid');
+                    } else {
+                        $('#taskDeadline').val('');
+                    }
+
+                    const tagIds = task.tags ? task.tags.map(t => t.id) : [];
+                    $('#taskTags').val(tagIds);
+
+                    $('#completedDiv').show();
+                    $('#taskCompleted').prop('checked', task.completed);
+
+                    $('#taskModal').modal('show');
+                },
+                error: function (xhr) {
+                    showNotification('Error al cargar la tarea', 'danger');
+                }
+            });
+        } /*  limpiar formulario */
+        
+        function resetTaskForm() {
+            $('#modalTitle').text('Nueva Tarea');
+            $('#taskId').val('');
+            $('#taskTitle').val('').removeClass('is-invalid');
+            $('#taskDescription').val('').removeClass('is-invalid');
+            $('#taskPriority').val('MEDIA');
+            $('#taskCategoryId').val('');
+            $('#taskDeadline').val('').removeClass('is-invalid');
+            $('#taskTags').val([]);
+            $('#completedDiv').hide();
+            $('#taskCompleted').prop('checked', false);
+            $('#taskForm')[0].reset();
+        }
+        /* Mostrar notificacion */
+        function showNotification(message, type) {
+            const alert = $(`
+            <div class="alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3" style="z-index: 9999; min-width: 300px;">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `);
+            $('body').append(alert);
+            setTimeout(() => alert.fadeOut(() => alert.remove()), 3000);
+        }
+    </script>
+</body>
+
+</html>
