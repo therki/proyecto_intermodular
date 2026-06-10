@@ -105,6 +105,25 @@
                 }
             });
         }
+
+        /* Listar todas las categorías - Para el selector */
+        function loadCategoriesForModal() {
+            $.ajax({
+                url: '/api/user/categories', 
+                method: 'GET',
+                success: function (categories) {
+                    allCategories = categories;
+                    let options = '<option value="">Sin categoría</option>';
+                    categories.forEach(category => {
+                        options += `<option value="${category.id}">${category.title}</option>`;
+                    });
+                    $('#taskCategoryId').html(options);
+                },
+                error: function () {
+                    console.error('Error al cargar categorías');
+                }
+            });
+        }
         /* Guardar tarea */
         function saveTask() {
             // Extraer valores
