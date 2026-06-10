@@ -43,7 +43,6 @@ public class CategoryService {
         }
     }
 
-    }
 
 /* OBTENER CATEGORIA POR ID */
     public Category findByID(Long id, User user){
