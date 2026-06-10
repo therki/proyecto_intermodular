@@ -27,7 +27,6 @@ public class Category {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @NotNull(message = "La categoría debe pertenecer a un usuario")
     private User user;
 
 
