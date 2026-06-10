@@ -28,7 +28,6 @@ public class Tag {
 
     @ManyToOne
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_tag_user"))
-    @NotNull(message = "La etiqueta debe pertenecer a un usuario")
     private User user;
 
     @Override
