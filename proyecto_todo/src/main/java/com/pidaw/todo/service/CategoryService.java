@@ -18,28 +18,30 @@ public class CategoryService {
     private final TaskService taskService;
 /* LISTAR CATEGORIAS */
     public List<Category> listCategories(User user) {
-        // Admin ver todas las categorias
-        List<Category> userCategories;
+        // Si es Admin o Gestor, ven todas las categorías del sistema
         if (user.getRole() != User.RoleType.USUARIO) {
-            return categoryRepository.findAllWithUser(Sort.by("title").ascending());
+            return categoryRepository.findAll(Sort.by("title").ascending()); 
+            // Nota: Usa findAll estándar de Spring Data para evitar fallos si findAllWithUser daba problemas
         } else {
-            // Rol usuario puede ver las propias más las del admin
-            // Categorias del usuario
-            userCategories = categoryRepository.findByUserId(user.getId(), Sort.by("title").ascending());
-            // Categorias del administrador
-            List<Category> adminCategories = categoryRepository.findByUserId(1L, Sort.by("title").ascending());
+            // Si es un Usuario normal, debe ver sus categorías propias MÁS las categorías creadas por los ADMIN o GESTORES
+            List<Category> allCategories = categoryRepository.findAll(Sort.by("title").ascending());
+            List<Category> filteredCategories = new ArrayList<>();
 
-            // Combinar todas en un listado
-            List<Category> allCategories = new ArrayList<>();
-            allCategories.addAll(userCategories);
-            for (Category adminCat : adminCategories) {
-                if (!allCategories.contains(adminCat)) {
-                    allCategories.add(adminCat);
+            for (Category cat : allCategories) {
+                // Añadimos la categoría si:
+                // 1. Le pertenece al propio usuario logueado
+                // 2. O si fue creada por un ADMIN o GESTOR (categorías del sistema para todos)
+                if (cat.getUser() == null || 
+                    cat.getUser().getId().equals(user.getId()) || 
+                    cat.getUser().getRole() == User.RoleType.ADMIN || 
+                    cat.getUser().getRole() == User.RoleType.GESTOR) {
+                    
+                    filteredCategories.add(cat);
                 }
             }
-
-            return allCategories;
+            return filteredCategories;
         }
+    }
 
     }
 
